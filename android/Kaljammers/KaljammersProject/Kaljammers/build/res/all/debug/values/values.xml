@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- From: /home/palba/proyectos/kaleidos/kaljammers/kaljammers-github/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/dimens.xml -->
+    <!-- From: /home/primicachero/Proyectos/kaljammers/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/dimens.xml -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <!-- From: /home/palba/proyectos/kaleidos/kaljammers/kaljammers-github/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/strings.xml -->
+    <!-- From: /home/primicachero/Proyectos/kaljammers/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/strings.xml -->
     <string name="action_settings">Settings</string>
-    <string name="app_name">Kaljammers</string>
+    <string name="app_name">kaljammers</string>
     <string name="hello_world">Hello world!</string>
-    <!-- From: /home/palba/proyectos/kaleidos/kaljammers/kaljammers-github/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/styles.xml -->
+    <!-- From: /home/primicachero/Proyectos/kaljammers/android/Kaljammers/KaljammersProject/Kaljammers/src/main/res/values/styles.xml -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in

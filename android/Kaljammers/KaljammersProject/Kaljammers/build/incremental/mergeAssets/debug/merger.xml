@@ -2,10 +2,10 @@
 <merger>
 
     <dataSet config="main" >
-        <source path="/home/palba/proyectos/kaleidos/kaljammers/kaljammers-github/android/Kaljammers/KaljammersProject/Kaljammers/src/main/assets" />
+        <source path="/home/primicachero/Proyectos/kaljammers/android/Kaljammers/KaljammersProject/Kaljammers/src/main/assets" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="/home/palba/proyectos/kaleidos/kaljammers/kaljammers-github/android/Kaljammers/KaljammersProject/Kaljammers/src/debug/assets" />
+        <source path="/home/primicachero/Proyectos/kaljammers/android/Kaljammers/KaljammersProject/Kaljammers/src/debug/assets" />
     </dataSet>
 
 </merger>
