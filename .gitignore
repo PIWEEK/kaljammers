@@ -29,4 +29,7 @@ local.properties
 build
 gradle
 .gradle
-android
+android/KaljammersProject/Kaljammers/build
+android/KaljammersProject/gradlew
+android/KaljammersProject/gradlew.bat
+android/KaljammersProject/settings.gradle
