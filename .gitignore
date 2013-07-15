@@ -22,7 +22,9 @@ local.properties
 #android studio files
 *.iml
 .idea
+android/Kaljammers/KaljammersProject/.idea
 build
 local.properties
 *.data
 *.bin
+android/Kaljammers/KaljammersProject/Kaljammers/build/
