@@ -24,3 +24,5 @@ local.properties
 .idea
 build
 local.properties
+*.data
+*.bin
