@@ -4,7 +4,6 @@ class KaljammersClient {
 
     def serverPort
     def serverHost = "localhost"
-    def sleepMillis = 1000
     def cliendId
     def clientToken
 
