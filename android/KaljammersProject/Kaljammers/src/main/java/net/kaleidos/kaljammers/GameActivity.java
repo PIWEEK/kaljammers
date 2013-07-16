@@ -338,7 +338,7 @@ public class GameActivity extends BaseGameActivity {
 
 
 
-            Log.v("[PLAYER position]","------------------>  (x,y):("+this.mX+","+this.mY+")");
+
 
 
 }

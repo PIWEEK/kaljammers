@@ -3,6 +3,7 @@ package net.kaleidos.kaljammers;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import android.util.Log;
 
 public class Player extends Sprite {
 
@@ -35,6 +36,7 @@ public class Player extends Sprite {
 
     @Override
     protected void onManagedUpdate(final float pSecondsElapsed) {
+        Log.v("[PLAYER position]","------------------>  (x,y):("+this.mX+","+this.mY+")");
         if(this.mX < FIELD_LIMIT_LEFT) {
             this.mX = FIELD_LIMIT_LEFT;
         } else if(this.mX + this.getWidth() > FIELD_LIMIT_RIGHT) {
