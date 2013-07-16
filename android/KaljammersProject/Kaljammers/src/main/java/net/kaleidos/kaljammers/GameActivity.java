@@ -2,6 +2,7 @@ package net.kaleidos.kaljammers;
 
 import android.graphics.Typeface;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
@@ -33,7 +34,6 @@ import org.andengine.util.adt.io.in.IInputStreamOpener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import android.util.Log;
 
 public class GameActivity extends BaseGameActivity {
     private ITexture mTexture;
@@ -219,18 +219,18 @@ public class GameActivity extends BaseGameActivity {
                 float x = GameActivity.this.player.getX();
                 float y = GameActivity.this.player.getY();
                 if(pValueX > 0) { //RIGHT
-                    x = x + GameActivity.this.player.getVelX();
+                    x = x + GameActivity.this.player.getVel();
                     GameActivity.this.lastMove += MOVE_RIGHT;
                 } else if(pValueX < 0) { //LEFT
-                    x = x - GameActivity.this.player.getVelX();
+                    x = x - GameActivity.this.player.getVel();
                     GameActivity.this.lastMove += MOVE_LEFT;
                 }
 
                 if(pValueY > 0) { //DOWN
-                    y = y + GameActivity.this.player.getVelY();
+                    y = y + GameActivity.this.player.getVel();
                     GameActivity.this.lastMove += MOVE_DOWN;
                 } else if(pValueY < 0) { //UP
-                    y = y - GameActivity.this.player.getVelY();
+                    y = y - GameActivity.this.player.getVel();
                     GameActivity.this.lastMove += MOVE_UP;
                 }
 

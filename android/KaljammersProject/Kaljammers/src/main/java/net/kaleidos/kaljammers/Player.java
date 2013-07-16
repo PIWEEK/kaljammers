@@ -26,26 +26,21 @@ public class Player extends Sprite {
     private boolean isPlayer1 = false;
 
 
-    public float getVelX() {
-        return velX;
+    public float getVel() {
+        return vel;
     }
 
-    public float getVelY() {
-        return velY;
+    public void setVel(float vel) {
+        this.vel = vel;
     }
 
-    public void setVelX(float velX) {
-        this.velX = velX;
-    }
-
-    private float velX = 7f;
-    private float velY = 7f;
+    private float vel = 50f;
 
     public float getStrength() {
         return strength;
     }
 
-    private float strength = 500f;
+    private float strength = 600f;
 
     public Player(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
         super(pX, pY, pTextureRegion, pVertexBufferObjectManager);

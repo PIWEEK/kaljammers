@@ -1,5 +1,6 @@
 package net.kaleidos.kaljammers;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.opengl.GLES20;
 
@@ -84,6 +85,8 @@ public class GameOneActivity extends BaseGameActivity {
     private static final int STATUS_PLAYER1_LAUNCH = 2;
     private static final int STATUS_PLAYER2_FRISBEE = 3;
     private static final int STATUS_PLAYER2_LAUNCH = 4;
+    private static final int STATUS_PLAYER1_PRE_LAUNCH = 5;
+
 
     float timePlayer2Frisbee = 0;
 
@@ -97,6 +100,9 @@ public class GameOneActivity extends BaseGameActivity {
     Scene scene;
     Camera camera;
 
+    byte score1 = 0;
+    byte score2 = 0;
+
 
     byte status = STATUS_PLAYER1_FRISBEE;
 
@@ -104,6 +110,11 @@ public class GameOneActivity extends BaseGameActivity {
     Player player2;
     Frisbee frisbee;
     Text debugText;
+
+    Text score1Text;
+    Text score2Text;
+
+    boolean atacking = true;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -157,14 +168,8 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-        this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
-
+        this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 48, true, Color.WHITE);
         this.mFont.load();
-
-
-
-
-
 
         BitmapTexture backgroundTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
             @Override
@@ -186,20 +191,56 @@ public class GameOneActivity extends BaseGameActivity {
 
     public void mainLoop(float pSecondsElapsed){
 
+
+        //GOALS
+        if (status!=STATUS_PLAYER1_FRISBEE && status!=STATUS_PLAYER2_FRISBEE && status!=STATUS_PLAYER1_PRE_LAUNCH){
+            final float centerY = (GameOneActivity.CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
+
+            if(frisbee.getX() <= 0) {
+                //Player 2 goal
+                score2 += 3;
+                if (score2<10){
+                    score2Text.setText("0"+score2);
+                } else {
+                    score2Text.setText(""+score2);
+                }
+                this.status = STATUS_PLAYER1_FRISBEE;
+                this.frisbee.setVisible(false);
+
+                player1.setPosition(0, centerY);
+                player2.setPosition(700, centerY);
+
+            } else if(frisbee.getX() + frisbee.getWidth() >= CAMERA_WIDTH) {
+                //Player 1 goal
+                score1 += 3;
+                if (score1<10){
+                    score1Text.setText("0"+score1);
+                } else {
+                    score1Text.setText(""+score1);
+                }
+                this.status = STATUS_PLAYER2_FRISBEE;
+                this.frisbee.setVisible(false);
+
+
+                player1.setPosition(0, centerY);
+                player2.setPosition(700, centerY);
+            }
+        }
+
+
+
         if (this.status == STATUS_PLAYER2_FRISBEE) {
             timePlayer2Frisbee += pSecondsElapsed;
             if (timePlayer2Frisbee>0.6){
                 //Launch player 2
                 this.status = STATUS_PLAYER2_LAUNCH;
 
-                float[] velY = {player2.getStrength(),player2.getStrength()/2,0,-player2.getStrength()/2, -player2.getStrength()};
+                float[] velY = {player2.getStrength()*1.2f,player2.getStrength()/2,0,-player2.getStrength()/2, player2.getStrength()*1.2f};
 
 
                 frisbee.setPosition(player2.getX() - 20, player2.getY()+ player2.getHeight()/2 - 16);
 
-                int y = random.nextInt(5);
-                GameOneActivity.this.debugText.setText("Y = "+velY[y]);
-
+                int y = random.nextInt(4);
                 frisbee.mPhysicsHandler.setVelocity(-this.player2.getStrength(), velY[y]);
 
 
@@ -217,53 +258,56 @@ public class GameOneActivity extends BaseGameActivity {
             float y = this.player1.getY();
 
             if ((this.lastMove == MOVE_RIGHT)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
-                x += this.player1.getVelX();
+                x += this.player1.getVel() * pSecondsElapsed;
             } else if ((this.lastMove == MOVE_LEFT)||(this.lastMove == MOVE_UP_LEFT)||(this.lastMove == MOVE_DOWN_LEFT)) {
-                x -= this.player1.getVelX();
+                x -= this.player1.getVel() * pSecondsElapsed;
             }
 
 
             if ((this.lastMove == MOVE_UP)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_UP_LEFT)) {
-                y -= this.player1.getVelY();
+                y -= this.player1.getVel() * pSecondsElapsed;
             } else if ((this.lastMove == MOVE_DOWN)||(this.lastMove == MOVE_DOWN_LEFT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
-                y += this.player1.getVelY();
+                y += this.player1.getVel() * pSecondsElapsed;
             }
 
             this.player1.setPosition(x, y);
         }
 
-        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH) {
-
+        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH || this.status == STATUS_PLAYER1_FRISBEE) {
             //Move player2
-            float x = this.player2.getX() + this.player2.getVelX();
-
-            GameOneActivity.this.debugText.setText("X "+x);
-
+            float x = this.player2.getX();
+            if (atacking) {
+                x -= this.player2.getVel() * pSecondsElapsed;
+            } else {
+                x += this.player2.getVel() * pSecondsElapsed;
+            }
 
             //5% chance of change direction
             if (random.nextInt(100)<5){
-                this.player2.setVelX(-this.player2.getVelX());
+                atacking = ! atacking;
             }
 
 
 
-            float y = this.frisbee.getY()+this.frisbee.getHeight()/2;
-            float p2y = this.player2.getY();
+            float fy = this.frisbee.getY()+this.frisbee.getHeight()/2;
+            float p2y = this.player2.getY()+this.player2.getHeight()/2;
+            float y = this.player2.getY();
 
 
-            if (y<p2y){
-                y += this.player2.getVelY();
+            if (fy<p2y){
+                if (p2y-fy>this.player2.getHeight()/2){
+                    y -= this.player2.getVel() * pSecondsElapsed;
+                }
             }
 
-            if (y>p2y){
-                y -= this.player2.getVelY();
+            if (fy>p2y){
+                if (fy-p2y>this.player2.getHeight()/2){
+                    y += this.player2.getVel() * pSecondsElapsed;
+                }
             }
 
             this.player2.setPosition(x, y);
         }
-
-
-
 
         if (this.status == STATUS_PLAYER2_LAUNCH) {
             //Frisbee catch player 1
@@ -281,19 +325,13 @@ public class GameOneActivity extends BaseGameActivity {
             }
         }
 
-
-
-    }
-
-    public void button1() {
-
-
-        if (this.status == STATUS_PLAYER1_FRISBEE) {
+        //Launch frisbee
+        if (this.status == STATUS_PLAYER1_PRE_LAUNCH) {
             this.status = STATUS_PLAYER1_LAUNCH;
             float velY = 0;
 
             if (this.lastMove == MOVE_UP_LEFT || this.lastMove == MOVE_UP) {
-                velY = -this.player1.getStrength();
+                velY = -this.player1.getStrength() * 1.2f;
             }
 
             if (this.lastMove == MOVE_UP_RIGHT) {
@@ -308,8 +346,8 @@ public class GameOneActivity extends BaseGameActivity {
                 velY = this.player1.getStrength() / 2;
             }
 
-            if (this.lastMove == MOVE_DOWN_LEFT || this.lastMove == MOVE_DOWN) {
-                velY = this.player1.getStrength();
+            if (this.lastMove == MOVE_DOWN || this.lastMove == MOVE_DOWN_LEFT) {
+                velY = this.player1.getStrength() * 1.2f;
             }
 
 
@@ -318,6 +356,15 @@ public class GameOneActivity extends BaseGameActivity {
 
 
             this.frisbee.setVisible(true);
+        }
+
+
+
+    }
+
+    public void button1() {
+        if (this.status == STATUS_PLAYER1_FRISBEE) {
+            this.status = STATUS_PLAYER1_PRE_LAUNCH;
         }
     }
 
@@ -360,12 +407,21 @@ public class GameOneActivity extends BaseGameActivity {
         player1 = new Player(0, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player1);
         player1.setPlayer1(true);
+        player1.setVel(300);
 
         player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
+        player2.setVel(150);
 
         debugText = new Text(0, 100, this.mFont, "                                                                                    ", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);
+
+
+        score1Text = new Text(325, 5, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        scene.getChildByIndex(LAYER_TEXT).attachChild(score1Text);
+
+        score2Text = new Text(430, 5, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        scene.getChildByIndex(LAYER_TEXT).attachChild(score2Text);
 
         initOnScreenControls();
 
@@ -412,7 +468,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
         /* Create the button and add it to the scene. */
-        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 75, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight(),
+        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 100, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight()-20,
                 this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.getVertexBufferObjectManager(),
                 new ButtonSprite.OnClickListener() {
 
@@ -454,6 +510,10 @@ public class GameOneActivity extends BaseGameActivity {
         onPopulateSceneCallback.onPopulateSceneFinished();
     }
 
+    private void debug(Object text) {
+        GameOneActivity.this.debugText.setText(""+text);
+    }
+
 
 
 
@@ -474,10 +534,11 @@ public class GameOneActivity extends BaseGameActivity {
         protected void onManagedUpdate(final float pSecondsElapsed) {
             if(this.mX < 0) {
                 this.mX = 0;
-                this.mPhysicsHandler.setVelocityX(-this.mPhysicsHandler.getVelocityX());
+                this.mPhysicsHandler.setVelocity(0,0);
+
             } else if(this.mX + this.getWidth() > GameOneActivity.CAMERA_WIDTH) {
                 this.mX = GameOneActivity.CAMERA_WIDTH - this.getWidth();
-                this.mPhysicsHandler.setVelocityX(-this.mPhysicsHandler.getVelocityX());
+                this.mPhysicsHandler.setVelocity(0, 0);
             }
 
             if(this.mY < FIELD_LIMIT_UP) {
