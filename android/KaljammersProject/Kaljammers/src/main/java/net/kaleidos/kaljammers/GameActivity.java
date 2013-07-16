@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.opengl.GLES20;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
 import org.andengine.engine.camera.hud.controls.DigitalOnScreenControl;
 import org.andengine.engine.handler.physics.PhysicsHandler;
@@ -108,6 +109,14 @@ public class GameActivity extends BaseGameActivity {
         onCreateResourcesCallback.onCreateResourcesFinished();
     }
 
+
+
+
+
+
+
+
+
     @Override
     public void onCreateScene(OnCreateSceneCallback onCreateSceneCallback) throws Exception {
 
@@ -127,12 +136,17 @@ public class GameActivity extends BaseGameActivity {
         debugText = new Text(0, 0, this.mFont, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.attachChild(debugText);
 
+        initOnScreenControls();
 
-        /* The On-Screen Controls to control the direction of the snake. */
-        this.mDigitalOnScreenControl = new DigitalOnScreenControl(0, CAMERA_HEIGHT - this.mOnScreenControlBaseTextureRegion.getHeight(), this.camera, this.mOnScreenControlBaseTextureRegion, this.mOnScreenControlKnobTextureRegion, 0.1f, this.getVertexBufferObjectManager(), new BaseOnScreenControl.IOnScreenControlListener() {
+        onCreateSceneCallback.onCreateSceneFinished(scene);
+    }
+
+
+
+    private void initOnScreenControls() {
+        final AnalogOnScreenControl analogOnScreenControl = new AnalogOnScreenControl(0, CAMERA_HEIGHT - this.mOnScreenControlBaseTextureRegion.getHeight(), this.camera, this.mOnScreenControlBaseTextureRegion, this.mOnScreenControlKnobTextureRegion, 0.1f, this.getVertexBufferObjectManager(), new AnalogOnScreenControl.IAnalogOnScreenControlListener() {
             @Override
             public void onControlChange(final BaseOnScreenControl pBaseOnScreenControl, final float pValueX, final float pValueY) {
-
                 GameActivity.this.debugText.setText("X="+pValueX+"   Y="+pValueY);
 
                 float x = GameActivity.this.player.getX();
@@ -150,18 +164,17 @@ public class GameActivity extends BaseGameActivity {
                 }
                 GameActivity.this.player.setPosition(x,y);
             }
+
+            @Override
+            public void onControlClick(final AnalogOnScreenControl pAnalogOnScreenControl) {
+				/* Nothing. */
+            }
         });
+        analogOnScreenControl.getControlBase().setBlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        analogOnScreenControl.getControlBase().setAlpha(0.5f);
+        analogOnScreenControl.refreshControlKnobPosition();
 
-        //Allow diagonals
-        this.mDigitalOnScreenControl.setAllowDiagonal(true);
-
-		/* Make the controls semi-transparent. */
-        this.mDigitalOnScreenControl.getControlBase().setBlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-        this.mDigitalOnScreenControl.getControlBase().setAlpha(0.5f);
-
-        scene.setChildScene(this.mDigitalOnScreenControl);
-
-        onCreateSceneCallback.onCreateSceneFinished(scene);
+        this.scene.setChildScene(analogOnScreenControl);
     }
 
     @Override
