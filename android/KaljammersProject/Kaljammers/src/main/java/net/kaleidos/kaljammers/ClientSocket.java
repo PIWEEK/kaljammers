@@ -36,7 +36,7 @@ public class ClientSocket {
             return false;
         }
     }
-    public boolean sendMessage(MessageSocket message){
+    public boolean sendMessage(SendMessageSocket message){
         try{
             ObjectOutputStream oos = new ObjectOutputStream(myclient.getOutputStream());
             if (myclient.isConnected()){
@@ -50,12 +50,12 @@ public class ClientSocket {
                 return false;
         }
     }
-    public MessageSocket getMessage() {
-        MessageSocket message;
+    public GetMessageSocket getMessage() {
+        GetMessageSocket message;
 
         try {
             ObjectInputStream iis = new ObjectInputStream(myclient.getInputStream());
-            message = (MessageSocket)iis.readObject();
+            message = (GetMessageSocket)iis.readObject();
         }catch (Exception e){
             return null;
         }
