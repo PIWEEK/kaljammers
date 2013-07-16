@@ -11,8 +11,9 @@ import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
+import org.andengine.entity.Entity;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -40,6 +41,7 @@ public class GameActivity extends BaseGameActivity {
     private ITextureRegion mFaceTextureRegion;
 
     private ITextureRegion mPlayerTextureRegion;
+    private ITextureRegion mBackgroundTextureRegion;
 
     private DigitalOnScreenControl mDigitalOnScreenControl;
     private BitmapTextureAtlas mOnScreenControlTexture;
@@ -50,6 +52,11 @@ public class GameActivity extends BaseGameActivity {
 
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
+    private static final int LAYER_BACKGROUND = 0;
+    private static final int LAYER_PLAYER = 1;
+    private static final int LAYER_FRISBEE = 2;
+    private static final int LAYER_TEXT = 3;
+    private static final int LAYER_COUNT = 4;
 
     Font mFont;
 
@@ -106,6 +113,23 @@ public class GameActivity extends BaseGameActivity {
 
 
 
+
+
+
+        BitmapTexture backgroundTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            @Override
+            public InputStream open() throws IOException {
+                return getResources().openRawResource(R.drawable.stadium);
+            }
+        });
+
+
+
+        this.mBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(backgroundTexture);
+        backgroundTexture.load();
+
+
+
         onCreateResourcesCallback.onCreateResourcesFinished();
     }
 
@@ -123,18 +147,31 @@ public class GameActivity extends BaseGameActivity {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
         scene = new Scene();
-        scene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
+
+        for(int i = 0; i < LAYER_COUNT; i++) {
+            this.scene.attachChild(new Entity());
+        }
+
+
+        /* No background color needed as we have a fullscreen background sprite. */
+        scene.setBackgroundEnabled(false);
+        scene.getChildByIndex(LAYER_BACKGROUND).attachChild(new Sprite(0, 0, this.mBackgroundTextureRegion, this.getVertexBufferObjectManager()));
+
+
+
+
+
         final float centerX = (GameActivity.CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
         final float centerY = (GameActivity.CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
 
         frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
-        scene.attachChild(frisbee);
+        scene.getChildByIndex(LAYER_FRISBEE).attachChild(frisbee);
 
         player = new Player(0, centerY, this.mPlayerTextureRegion, this.getVertexBufferObjectManager());
-        scene.attachChild(player);
+        scene.getChildByIndex(LAYER_PLAYER).attachChild(player);
 
         debugText = new Text(0, 0, this.mFont, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
-        scene.attachChild(debugText);
+        scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);
 
         initOnScreenControls();
 
@@ -162,7 +199,7 @@ public class GameActivity extends BaseGameActivity {
                 } else if(pValueY < 0) {
                     y = y - GameActivity.this.player.getVelY();
                 }
-                GameActivity.this.player.setPosition(x,y);
+                GameActivity.this.player.setPosition(x, y);
             }
 
             @Override
@@ -175,6 +212,26 @@ public class GameActivity extends BaseGameActivity {
         analogOnScreenControl.refreshControlKnobPosition();
 
         this.scene.setChildScene(analogOnScreenControl);
+
+
+
+
+        /* Create the button and add it to the scene. */
+        final Sprite face = new ButtonSprite(centerX, centerY, this.mFace1TextureRegion, this.mFace2TextureRegion, this.mFace3TextureRegion, this.getVertexBufferObjectManager(), this);
+        scene.registerTouchArea(face);
+        scene.attachChild(face);
+        scene.setTouchAreaBindingOnActionDownEnabled(true);
+
+
+
+
+
+
+
+
+
+
+
     }
 
     @Override
