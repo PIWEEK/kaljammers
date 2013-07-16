@@ -2,13 +2,16 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
     
-    def coordP1 = [x:0, y:0] // x,y
-    def coordP2 = [x:0, y:0]
-    def coordF  = [x:0, y:0]
-    def statusF = 0 // 0,1,2
-    
+    Coordinate coordP1 = new Coordinate(x:0, y:0) // x,y
+    Coordinate coordP2 = new Coordinate(x:0, y:0) // x,y
+    Coordinate coordF = new Coordinate(x:0, y:0) // x,y
+    FrisbeeStatus statusF = FrisbeeStatus.AIR // 0,1,2    
     
     def sleepMillis = 1000
+    
+    Long gameTime = Calendar.instance.time.time
+    
+    def random = new Random()
     
 
     private static final INSTANCE = new GameBrain()
@@ -23,21 +26,59 @@ class GameBrain {
      */ 
     def gameProcess(actionP1, actionP2) {
         
-        // p1
-        coordP1.x += actionP1.direction
-        coordP1.y += actionP1.direction
+        // game logic
+        def info = calculateAction(actionP1, actionP2)
         
-        // F
+        // info
+        def infoByte = convertInfoToByte(info)
+
+        // game time
+        waitGameTime()
+        
+        return infoByte
+    }
+     
+     
+    def waitGameTime() {        
+        // game time
+        def nowInMillis = Calendar.instance.time.time
+        def waitMillis = sleepMillis - (nowInMillis - gameTime)
+        gameTime = nowInMillis
+
+        if (waitMillis > 0) {
+            sleep(waitMillis)
+        }
+    }
+    
+    def calculateAction(actionP1, actionP2) {
+        // p1
+        coordP1.x = 800 //actionP1.direction
+        coordP1.y = 480
+        
+        // F    
         coordF.x++ 
         coordF.y++ 
         
-        statusF = 0
+        statusF = FrisbeeStatus.AIR
         
+        def info = [coordP1:coordP1, coordP2:coordP2, coordF:coordF, statusF:statusF]
+        println "info: ${info}"
         
-        // game time
-        sleep(sleepMillis)
-        
-        return [coordP1, coordP2, coordF, statusF]
+        return info
     }
     
+    def convertInfoToByte(info)  {
+        // [coordP1, coordP2, coordF, statusF]
+        byte[] infoByte = [info.coordP1.x, info.coordP1.y, info.coordP2.x, info.coordP2.y, 
+                            info.coordF.x, info.coordF.y, info.statusF.ordinal()] as byte[]
+
+        println "size: ${infoByte.size()}"
+        
+        return infoByte
+    }
+}
+
+
+public enum FrisbeeStatus {
+    AIR, PLAYER1, PLAYER2
 }

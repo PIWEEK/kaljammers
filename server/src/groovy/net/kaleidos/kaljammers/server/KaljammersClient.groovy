@@ -28,6 +28,7 @@ class KaljammersClient {
             while (true) {
                 output << "111\n"
                 buffer = reader.readLine()
+                println "size: ${buffer.size()}"
                 println "$buffer"
             }
         }    
