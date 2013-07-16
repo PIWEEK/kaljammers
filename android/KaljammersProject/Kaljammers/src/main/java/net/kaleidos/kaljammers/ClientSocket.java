@@ -1,4 +1,5 @@
 package net.kaleidos.kaljammers;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import 	java.net.Socket;
 /**
@@ -48,5 +49,16 @@ public class ClientSocket {
         }catch(Exception e){
                 return false;
         }
+    }
+    public MessageSocket getMessage() {
+        MessageSocket message;
+
+        try {
+            ObjectInputStream iis = new ObjectInputStream(myclient.getInputStream());
+            message = (MessageSocket)iis.readObject();
+        }catch (Exception e){
+            return null;
+        }
+        return message;
     }
 }
