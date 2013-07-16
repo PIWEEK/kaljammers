@@ -1,9 +1,10 @@
 package net.kaleidos.kaljammers;
 
+import android.util.Log;
+
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import android.util.Log;
 
 public class Player extends Sprite {
 
@@ -12,12 +13,29 @@ public class Player extends Sprite {
     private static final int FIELD_LIMIT_RIGHT = 395;
     private static final int FIELD_LIMIT_LEFT = 0;
 
+    private static final int CAMERA_RIGHT = 800;
+
+    public boolean isPlayer1() {
+        return isPlayer1;
+    }
+
+    public void setPlayer1(boolean player1) {
+        isPlayer1 = player1;
+    }
+
+    private boolean isPlayer1 = false;
+
+
     public float getVelX() {
         return velX;
     }
 
     public float getVelY() {
         return velY;
+    }
+
+    public void setVelX(float velX) {
+        this.velX = velX;
     }
 
     private float velX = 7f;
@@ -37,10 +55,18 @@ public class Player extends Sprite {
     @Override
     protected void onManagedUpdate(final float pSecondsElapsed) {
         Log.v("[PLAYER position]","------------------>  (x,y):("+this.mX+","+this.mY+")");
-        if(this.mX < FIELD_LIMIT_LEFT) {
-            this.mX = FIELD_LIMIT_LEFT;
-        } else if(this.mX + this.getWidth() > FIELD_LIMIT_RIGHT) {
-            this.mX = FIELD_LIMIT_RIGHT - this.getWidth();
+        if (isPlayer1) {
+            if(this.mX < FIELD_LIMIT_LEFT) {
+                this.mX = FIELD_LIMIT_LEFT;
+            } else if(this.mX + this.getWidth() > FIELD_LIMIT_RIGHT) {
+                this.mX = FIELD_LIMIT_RIGHT - this.getWidth();
+            }
+        } else {
+            if(this.mX < FIELD_LIMIT_RIGHT) {
+                this.mX = FIELD_LIMIT_RIGHT;
+            } else if(this.mX + this.getWidth() > CAMERA_RIGHT) {
+                this.mX = CAMERA_RIGHT - this.getWidth();
+            }
         }
 
         if(this.mY < FIELD_LIMIT_UP) {

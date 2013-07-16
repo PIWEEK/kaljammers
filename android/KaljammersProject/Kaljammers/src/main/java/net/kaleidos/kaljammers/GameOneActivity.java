@@ -34,6 +34,7 @@ import org.andengine.util.adt.io.in.IInputStreamOpener;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 
 public class GameOneActivity extends BaseGameActivity {
@@ -84,7 +85,9 @@ public class GameOneActivity extends BaseGameActivity {
     private static final int STATUS_PLAYER2_FRISBEE = 3;
     private static final int STATUS_PLAYER2_LAUNCH = 4;
 
+    float timePlayer2Frisbee = 0;
 
+    Random random = new Random();
 
     int lastMove = MOVE_NONE;
 
@@ -183,8 +186,31 @@ public class GameOneActivity extends BaseGameActivity {
 
     public void mainLoop(float pSecondsElapsed){
 
+        if (this.status == STATUS_PLAYER2_FRISBEE) {
+            timePlayer2Frisbee += pSecondsElapsed;
+            if (timePlayer2Frisbee>0.6){
+                //Launch player 2
+                this.status = STATUS_PLAYER2_LAUNCH;
 
-        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH) {
+                float[] velY = {player2.getStrength(),player2.getStrength()/2,0,-player2.getStrength()/2, -player2.getStrength()};
+
+
+                frisbee.setPosition(player2.getX() - 20, player2.getY()+ player2.getHeight()/2 - 16);
+
+                int y = random.nextInt(5);
+                GameOneActivity.this.debugText.setText("Y = "+velY[y]);
+
+                frisbee.mPhysicsHandler.setVelocity(-this.player2.getStrength(), velY[y]);
+
+
+                this.frisbee.setVisible(true);
+                timePlayer2Frisbee = 0;
+            }
+
+        }
+
+
+        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH || this.status == STATUS_PLAYER2_FRISBEE) {
 
             //Move player1
             float x = this.player1.getX();
@@ -206,9 +232,41 @@ public class GameOneActivity extends BaseGameActivity {
             this.player1.setPosition(x, y);
         }
 
+        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH) {
+
+            //Move player2
+            float x = this.player2.getX() + this.player2.getVelX();
+
+            GameOneActivity.this.debugText.setText("X "+x);
+
+
+            //5% chance of change direction
+            if (random.nextInt(100)<5){
+                this.player2.setVelX(-this.player2.getVelX());
+            }
+
+
+
+            float y = this.frisbee.getY()+this.frisbee.getHeight()/2;
+            float p2y = this.player2.getY();
+
+
+            if (y<p2y){
+                y += this.player2.getVelY();
+            }
+
+            if (y>p2y){
+                y -= this.player2.getVelY();
+            }
+
+            this.player2.setPosition(x, y);
+        }
+
+
+
 
         if (this.status == STATUS_PLAYER2_LAUNCH) {
-            //Frisbee catch
+            //Frisbee catch player 1
             if (this.frisbee.collidesWith(this.player1)){
                 this.status = STATUS_PLAYER1_FRISBEE;
                 this.frisbee.setVisible(false);
@@ -216,9 +274,10 @@ public class GameOneActivity extends BaseGameActivity {
         }
 
         if (this.status == STATUS_PLAYER1_LAUNCH) {
-            //SIMULATE RETURN
-            if (this.frisbee.getX() > 400){
-                this.status = STATUS_PLAYER2_LAUNCH;
+            //Frisbee catch player 2
+            if (this.frisbee.collidesWith(this.player2)){
+                this.status = STATUS_PLAYER2_FRISBEE;
+                this.frisbee.setVisible(false);
             }
         }
 
@@ -300,8 +359,12 @@ public class GameOneActivity extends BaseGameActivity {
 
         player1 = new Player(0, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player1);
+        player1.setPlayer1(true);
 
-        debugText = new Text(0, 100, this.mFont, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
+        player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
+        scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
+
+        debugText = new Text(0, 100, this.mFont, "                                                                                    ", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);
 
         initOnScreenControls();
@@ -335,9 +398,6 @@ public class GameOneActivity extends BaseGameActivity {
 
                     GameOneActivity.this.lastMove += MOVE_UP;
                 }
-
-                GameOneActivity.this.debugText.setText("MOVE = "+GameOneActivity.this.lastMove);
-
             }
 
         });
@@ -352,7 +412,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
         /* Create the button and add it to the scene. */
-        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 150, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight(),
+        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 75, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight(),
                 this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.getVertexBufferObjectManager(),
                 new ButtonSprite.OnClickListener() {
 
@@ -368,6 +428,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
         /* Create the button and add it to the scene. */
+        /*
         final Sprite button2 = new ButtonSprite(CAMERA_WIDTH - 75, CAMERA_HEIGHT - this.mOnScreenButton2TextureRegion.getHeight(),
                 this.mOnScreenButton2TextureRegion, this.mOnScreenButton2TextureRegion, this.mOnScreenButton2TextureRegion, this.getVertexBufferObjectManager(),
                 new ButtonSprite.OnClickListener() {
@@ -380,7 +441,7 @@ public class GameOneActivity extends BaseGameActivity {
         );
         scene.registerTouchArea(button2);
         scene.getChildByIndex(LAYER_TEXT).attachChild(button2);
-
+*/
 
         scene.setTouchAreaBindingOnActionDownEnabled(true);
 
