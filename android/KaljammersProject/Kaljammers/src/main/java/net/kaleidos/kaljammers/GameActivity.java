@@ -32,7 +32,7 @@ import org.andengine.util.adt.io.in.IInputStreamOpener;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import android.util.Log;
 
 public class GameActivity extends BaseGameActivity {
     private ITexture mTexture;
@@ -50,6 +50,7 @@ public class GameActivity extends BaseGameActivity {
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
 
+
     Font mFont;
 
     int direction;
@@ -64,7 +65,7 @@ public class GameActivity extends BaseGameActivity {
     @Override
     public EngineOptions onCreateEngineOptions() {
         camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-
+        Log.v("[NEW PLAY]","********************************************************************************************************** ->  start");
         return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
     }
 
@@ -191,6 +192,7 @@ public class GameActivity extends BaseGameActivity {
 
         @Override
         protected void onManagedUpdate(final float pSecondsElapsed) {
+            Log.v("[FRISBEE position]","------------------>  (x,y):("+this.mX+","+this.mY+")");
             if(this.mX < 0) {
                 this.mPhysicsHandler.setVelocityX(velX);
             } else if(this.mX + this.getWidth() > GameActivity.CAMERA_WIDTH) {
@@ -233,6 +235,7 @@ public class GameActivity extends BaseGameActivity {
 
         @Override
         protected void onManagedUpdate(final float pSecondsElapsed) {
+            Log.v("[PLAYER position]","------------------>  (x,y):("+this.mX+","+this.mY+")");
             if(this.mX < 0) {
                 this.mX = 0;
             } else if(this.mX + this.getWidth() > GameActivity.CAMERA_WIDTH) {

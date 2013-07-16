@@ -12,7 +12,8 @@ import java.io.Serializable;
 
 public class GetMessageSocket implements Serializable {
     // type frisbee status
-    public enum FrisbeeStatus { PLAYER1, PLAYER2, AIR };
+    public enum FrisbeeStatus { PLAYER1, PLAYER2, AIR, END };
+
     // Coordenate X player 1
     private int player1X;
     // Coordenate Y player 1
