@@ -2,14 +2,14 @@ package net.kaleidos.kaljammers.server
 
 class KaljammersClient {
 
-    def serverPort = 4444
+    def serverPort
     def serverHost = "localhost"
-    def sleepMillis = 1000
     def cliendId
     def clientToken
 
     static main(args) {
         def kaljammersClient = new KaljammersClient()
+        kaljammersClient.serverPort = args[0] as Integer
         kaljammersClient.clientProcess()
     }
     
@@ -21,13 +21,15 @@ class KaljammersClient {
             clientToken = UUID.randomUUID().toString().replaceAll('-', '')
             println "Client token ${clientToken}..."
             output << "$clientToken\n"
-
-            def clientId = input.newReader().readLine()
-            println "clientId = $clientId"
+            def reader = input.newReader()
+            def buffer = reader.readLine()
+            println "clientId = $buffer"
         
             while (true) {
-                sleep(sleepMillis)
-                output << "$clientToken[0]\n"
+                output << "111\n"
+                buffer = reader.readLine()
+                println "size: ${buffer.size()}"
+                println "$buffer"
             }
         }    
     }
