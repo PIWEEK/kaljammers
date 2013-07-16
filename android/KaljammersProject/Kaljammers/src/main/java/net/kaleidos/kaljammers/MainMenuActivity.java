@@ -31,9 +31,9 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
 
-    protected static final int MENU_RESET = 0;
-    protected static final int MENU_QUIT = MENU_RESET + 1;
-    protected static final int MENU_NEXT = MENU_QUIT + 1;
+    protected static final int MENU_QUIT = 0;
+    protected static final int MENU_ONE = 1;
+    protected static final int MENU_TWO = 2;
 
     // ===========================================================
     // Fields
@@ -76,7 +76,7 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
     @Override
     public void onCreateResources() {
-        this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+        this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 64);
         this.mFont.load();
     }
 
@@ -104,17 +104,14 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 				/* End Activity. */
                 this.finish();
                 return true;
-            case MENU_NEXT:
-				
-				/* Remove the menu and reset it. */
-                /*this.mMainScene.clearChildScene();
-
-                this.mMainScene.setChildScene(this.mBackgroundScene, false, true, true);
-                */
-
-
+            case MENU_ONE:
+                MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, GameOneActivity.class));
+                MainMenuActivity.this.finish();
+                return true;
+            case MENU_TWO:
                 MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, GameActivity.class));
                 MainMenuActivity.this.finish();
+                return true;
             default:
                 return false;
         }
@@ -132,11 +129,17 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
         Color pUnselectedColor = new Color(1f, 0f, 0f);
 
 
-        final IMenuItem nextMenuItem =
+        final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_NEXT, mFont, "START", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, mFont, "START ONE PLAYER", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
-        this.mMenuScene.addMenuItem(nextMenuItem);
+        this.mMenuScene.addMenuItem(onePMenuItem);
+
+        final IMenuItem twoPMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_TWO, mFont, "START TWO PLAYERS", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(twoPMenuItem);
 
 
         final IMenuItem quitMenuItem =

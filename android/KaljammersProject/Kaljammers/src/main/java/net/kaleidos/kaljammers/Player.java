@@ -19,8 +19,14 @@ public class Player extends Sprite {
         return velY;
     }
 
-    private float velX = 20f;
-    private float velY = 20f;
+    private float velX = 7f;
+    private float velY = 7f;
+
+    public float getStrength() {
+        return strength;
+    }
+
+    private float strength = 500f;
 
     public Player(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
         super(pX, pY, pTextureRegion, pVertexBufferObjectManager);
