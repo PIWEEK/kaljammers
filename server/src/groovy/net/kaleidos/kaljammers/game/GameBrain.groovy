@@ -2,17 +2,16 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
     
+    final static int sleepMillis = 100
+
     Coordinate coordP1 = new Coordinate(x:0, y:0) // x,y
     Coordinate coordP2 = new Coordinate(x:0, y:0) // x,y
     Coordinate coordF = new Coordinate(x:0, y:0) // x,y
     FrisbeeStatus statusF = FrisbeeStatus.AIR // 0,1,2    
     
-    def sleepMillis = 1000
-    
     Long gameTime = Calendar.instance.time.time
-    
+
     def random = new Random()
-    
 
     private static final INSTANCE = new GameBrain()
     static getInstance(){ return INSTANCE }
