@@ -15,33 +15,34 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="net.kaleidos.kaljammers.GameActivity"
-            android:label="@string/app_name"
             android:configChanges="orientation|screenSize"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-                android:name="net.kaleidos.kaljammers.GameOneActivity"
-                android:label="@string/app_name"
-                android:configChanges="orientation|screenSize"
-                >
+            android:name="net.kaleidos.kaljammers.GameOneActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name" >
             <intent-filter>
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="net.kaleidos.kaljammers.MainMenuActivity"
-            android:label="@string/app_name"
             android:configChanges="orientation|screenSize"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="net.kaleidos.kaljammers.StadiumActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_stadium" >
         </activity>
     </application>
 

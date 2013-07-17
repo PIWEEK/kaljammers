@@ -5,5 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main_menu">MainMenuActivity</string>
+    <string name="title_stadium_list">Stadiums</string>
+    <string name="title_stadium_detail">Stadium Detail</string>
+    <string name="title_activity_stadium">StadiumActivity</string>
 
 </resources>
