@@ -2,17 +2,16 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
     
+    final static int sleepMillis = 100
+
     Coordinate coordP1 = new Coordinate(x:0, y:0) // x,y
     Coordinate coordP2 = new Coordinate(x:0, y:0) // x,y
     Coordinate coordF = new Coordinate(x:0, y:0) // x,y
     FrisbeeStatus statusF = FrisbeeStatus.AIR // 0,1,2    
     
-    def sleepMillis = 1000
-    
     Long gameTime = Calendar.instance.time.time
-    
+
     def random = new Random()
-    
 
     private static final INSTANCE = new GameBrain()
     static getInstance(){ return INSTANCE }
@@ -66,6 +65,16 @@ class GameBrain {
 }
 
 
-public enum FrisbeeStatus {
-    AIR, PLAYER1, PLAYER2
+enum FrisbeeStatus {
+    AIR(0), PLAYER1(1), PLAYER2(2)
+    FrisbeeStatus(int value) { this.value = value }
+    private final int value
+    public int value() { return value }
 }
+
+//enum Coin {
+    //penny(1), nickel(5), dime(10), quarter(25)
+    //Coin(int value) { this.value = value }
+    //private final int value
+    //public int value() { return value }
+//}
