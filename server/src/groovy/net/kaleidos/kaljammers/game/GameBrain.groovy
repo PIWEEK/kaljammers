@@ -66,6 +66,16 @@ class GameBrain {
 }
 
 
-public enum FrisbeeStatus {
-    AIR, PLAYER1, PLAYER2
+enum FrisbeeStatus {
+    AIR(0), PLAYER1(1), PLAYER2(2)
+    FrisbeeStatus(int value) { this.value = value }
+    private final int value
+    public int value() { return value }
 }
+
+//enum Coin {
+    //penny(1), nickel(5), dime(10), quarter(25)
+    //Coin(int value) { this.value = value }
+    //private final int value
+    //public int value() { return value }
+//}

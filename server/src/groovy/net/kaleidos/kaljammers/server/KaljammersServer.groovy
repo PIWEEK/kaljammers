@@ -42,6 +42,7 @@ class KaljammersServer {
                         // info.coordF.x, info.coordF.y, info.statusF.ordinal()] as byte[]
                         
                         println "$move"
+                        
                         def dos = new DataOutputStream(output)
                         dos.writeShort(move.coordP1.x) //2
                         dos.writeShort(move.coordP1.y)
@@ -49,7 +50,7 @@ class KaljammersServer {
                         dos.writeShort(move.coordP2.y)
                         dos.writeShort(move.coordF.x)
                         dos.writeShort(move.coordF.y)
-                        dos << move.statusF.ordinal()
+                        dos.writeByte(move.statusF.value())
                         dos << "\n"
                     }
 
