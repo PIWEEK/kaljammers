@@ -1,8 +1,8 @@
 package net.kaleidos.kaljammers;
 
+
 import android.content.Intent;
 import android.graphics.Typeface;
-
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -10,7 +10,6 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.menu.MenuScene;
-import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.TextMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
@@ -22,11 +21,12 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.color.Color;
 
-
-public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuItemClickListener {
+public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene.IOnMenuItemClickListener {
     // ===========================================================
     // Constants
     // ===========================================================
+
+    public static int SelectedGame = 0;
 
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
@@ -34,7 +34,8 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected static final int MENU_QUIT = 0;
     protected static final int MENU_ONE = 1;
     protected static final int MENU_TWO = 2;
-
+    protected static final int MENU_THREE = 3;
+    protected static final int MENU_FOUR = 4;
 
     // ===========================================================
     // Fields
@@ -100,24 +101,31 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
     @Override
     public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
-        switch(pMenuItem.getID()) {
-            case MENU_QUIT:
+        if (pMenuItem.getID() == MENU_QUIT) {
 				/* End Activity. */
                 this.finish();
                 return true;
-            case MENU_ONE:
-                StadiumActivity.SelectedGame = 1;
-                MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, StadiumActivity.class));
-                MainMenuActivity.this.finish();
-                return true;
-            case MENU_TWO:
-                StadiumActivity.SelectedGame = 2;
-                MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, StadiumActivity.class));
-                MainMenuActivity.this.finish();
-                return true;
-            default:
-                return false;
         }
+        if (pMenuItem.getID() == MENU_ONE) {
+                GameOneActivity.SelectedStadium = 1;
+        }
+        if (pMenuItem.getID() == MENU_TWO) {
+            GameOneActivity.SelectedStadium = 2;
+        }
+        if (pMenuItem.getID() == MENU_THREE) {
+            GameOneActivity.SelectedStadium = 3;
+        }
+        if (pMenuItem.getID() == MENU_FOUR) {
+            GameOneActivity.SelectedStadium = 4;
+        }
+
+        if (SelectedGame == 1){
+            StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
+        }else{
+            StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameActivity.class));
+        }
+        StadiumActivity.this.finish();
+        return true;
     }
 
     // ===========================================================
@@ -134,15 +142,29 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
         final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_ONE, mFont, "START ONE PLAYER", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, mFont, "STADIUM 1", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(onePMenuItem);
 
         final IMenuItem twoPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_TWO, mFont, "START TWO PLAYERS", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_TWO, mFont, "STADIUM 2", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(twoPMenuItem);
+
+        final IMenuItem threePMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_THREE, mFont, "STADIUM 3", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(threePMenuItem);
+
+
+        final IMenuItem fourPMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_FOUR, mFont, "STADIUM 4", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(fourPMenuItem);
+
 
 
         final IMenuItem quitMenuItem =
@@ -164,14 +186,6 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected void createBackgroundScene() {
         this.mBackgroundScene = new Scene();
 
-/*
-        final float centerX = (CAMERA_WIDTH - mBackgroundTextureRegion.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - mBackgroundTextureRegion.getHeight()) / 2;
-        SpriteBackground bg = new SpriteBackground(new Sprite(centerX, centerY, mBackgroundTextureRegion, this.getVertexBufferObjectManager()));
-        this.mBackgroundScene.setBackground(bg);
-
-        */
-
         this.mBackgroundScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
 
         this.mBackgroundScene.setBackgroundEnabled(true);
@@ -182,4 +196,5 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
+
 }

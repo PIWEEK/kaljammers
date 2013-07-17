@@ -56,6 +56,7 @@ public class GameOneActivity extends BaseGameActivity {
     private BitmapTextureAtlas mOnScreenButton2Texture;
     private ITextureRegion mOnScreenButton2TextureRegion;
 
+    public static int SelectedStadium = 0;
 
 
     private static final int CAMERA_WIDTH = 800;
@@ -122,6 +123,7 @@ public class GameOneActivity extends BaseGameActivity {
     public EngineOptions onCreateEngineOptions() {
         camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
+        gameField.setImageId(this.SelectedStadium);
         final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
         engineOptions.getTouchOptions().setNeedsMultiTouch(true);
         return engineOptions;

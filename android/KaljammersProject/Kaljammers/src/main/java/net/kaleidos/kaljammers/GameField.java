@@ -70,7 +70,21 @@ public class GameField {
     }
 
     public void setImageId(int imageId) {
-        this.imageId = imageId;
+        switch(imageId) {
+            case 1:
+                this.imageId = R.drawable.stadium;
+                break;
+            case 2:
+                this.imageId = R.drawable.stadium1;
+                break;
+            case 3:
+                this.imageId = R.drawable.stadium2;
+                break;
+            case 4:
+                this.imageId = R.drawable.stadium3;
+                break;
+        }
+
     }
 
 
