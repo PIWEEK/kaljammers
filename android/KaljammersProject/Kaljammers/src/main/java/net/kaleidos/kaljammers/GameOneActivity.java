@@ -8,7 +8,6 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
 import org.andengine.engine.camera.hud.controls.DigitalOnScreenControl;
 import org.andengine.engine.handler.IUpdateHandler;
-import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
@@ -28,7 +27,6 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegionFactory;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
@@ -39,6 +37,36 @@ import java.util.Random;
 
 
 public class GameOneActivity extends BaseGameActivity {
+
+    public static final int CAMERA_WIDTH = 800;
+    public static final int CAMERA_HEIGHT = 480;
+    public static final int LAYER_BACKGROUND = 0;
+    public static final int LAYER_PLAYER = 1;
+    public static final int LAYER_FRISBEE = 2;
+    public static final int LAYER_TEXT = 3;
+    public static final int LAYER_COUNT = 4;
+
+    public static final int MOVE_NONE = 0;
+    public static final int MOVE_UP = 10;
+    public static final int MOVE_UP_RIGHT = 11;
+    public static final int MOVE_RIGHT = 1;
+    public static final int MOVE_DOWN_RIGHT = 21;
+    public static final int MOVE_DOWN = 20;
+    public static final int MOVE_DOWN_LEFT = 22;
+    public static final int MOVE_LEFT = 2;
+    public static final int MOVE_UP_LEFT = 12;
+
+
+    public static final int STATUS_PLAYER1_FRISBEE = 1;
+    public static final int STATUS_PLAYER1_LAUNCH = 2;
+    public static final int STATUS_PLAYER2_FRISBEE = 3;
+    public static final int STATUS_PLAYER2_LAUNCH = 4;
+
+
+    private boolean buttonPresed = false;
+
+
+
     private ITexture mTexture;
     private ITextureRegion mFaceTextureRegion;
 
@@ -58,34 +86,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-    private static final int CAMERA_WIDTH = 800;
-    private static final int CAMERA_HEIGHT = 480;
-    private static final int LAYER_BACKGROUND = 0;
-    private static final int LAYER_PLAYER = 1;
-    private static final int LAYER_FRISBEE = 2;
-    private static final int LAYER_TEXT = 3;
-    private static final int LAYER_COUNT = 4;
 
-
-
-
-
-    private static final int MOVE_NONE = 0;
-    private static final int MOVE_UP = 10;
-    private static final int MOVE_UP_RIGHT = 11;
-    private static final int MOVE_RIGHT = 1;
-    private static final int MOVE_DOWN_RIGHT = 21;
-    private static final int MOVE_DOWN = 20;
-    private static final int MOVE_DOWN_LEFT = 22;
-    private static final int MOVE_LEFT = 2;
-    private static final int MOVE_UP_LEFT = 12;
-
-
-    private static final int STATUS_PLAYER1_FRISBEE = 1;
-    private static final int STATUS_PLAYER1_LAUNCH = 2;
-    private static final int STATUS_PLAYER2_FRISBEE = 3;
-    private static final int STATUS_PLAYER2_LAUNCH = 4;
-    private static final int STATUS_PLAYER1_PRE_LAUNCH = 5;
 
 
     float timePlayer2Frisbee = 0;
@@ -114,9 +115,48 @@ public class GameOneActivity extends BaseGameActivity {
     Text score1Text;
     Text score2Text;
 
-    boolean atacking = true;
-
     GameField gameField = new GameField();
+    GameEngine gameEngine = new GameEngineOnePlayer();
+
+
+    public GameField getGameField() {
+        return this.gameField;
+    }
+    public Frisbee getFrisbee() {
+        return this.frisbee;
+    }
+    public Player getPlayer1() {
+        return this.player1;
+    }
+    public Player getPlayer2() {
+        return this.player2;
+    }
+
+    public byte getScore1() {
+        return score1;
+    }
+
+    public void setScore1(byte score1) {
+        this.score1 = score1;
+        if (score1<10){
+            score1Text.setText("0"+score1);
+        } else {
+            score1Text.setText(""+score1);
+        }
+    }
+
+    public byte getScore2() {
+        return score2;
+    }
+
+    public void setScore2(byte score2) {
+        this.score2 = score2;
+        if (score2<10){
+            score2Text.setText("0"+score2);
+        } else {
+            score2Text.setText(""+score2);
+        }
+    }
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -192,214 +232,13 @@ public class GameOneActivity extends BaseGameActivity {
 
 
     public void mainLoop(float pSecondsElapsed){
-
-
-        //GOALS
-        if (status!=STATUS_PLAYER1_FRISBEE && status!=STATUS_PLAYER2_FRISBEE && status!=STATUS_PLAYER1_PRE_LAUNCH){
-            final float centerY = (GameOneActivity.CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
-
-            if(frisbee.getX() <= 0) {
-                //Player 2 goal
-                score2 += 3;
-                if (score2<10){
-                    score2Text.setText("0"+score2);
-                } else {
-                    score2Text.setText(""+score2);
-                }
-                this.status = STATUS_PLAYER1_FRISBEE;
-                this.frisbee.setVisible(false);
-
-                player1.setPosition(0, centerY);
-                player2.setPosition(700, centerY);
-
-            } else if(frisbee.getX() + frisbee.getWidth() >= CAMERA_WIDTH) {
-                //Player 1 goal
-                score1 += 3;
-                if (score1<10){
-                    score1Text.setText("0"+score1);
-                } else {
-                    score1Text.setText(""+score1);
-                }
-                this.status = STATUS_PLAYER2_FRISBEE;
-                this.frisbee.setVisible(false);
-
-
-                player1.setPosition(0, centerY);
-                player2.setPosition(700, centerY);
-            }
-        }
-
-
-
-        if (this.status == STATUS_PLAYER2_FRISBEE) {
-            timePlayer2Frisbee += pSecondsElapsed;
-            if (timePlayer2Frisbee>0.6){
-                //Launch player 2
-                this.status = STATUS_PLAYER2_LAUNCH;
-
-                float[] velY = {player2.getStrength()*1.2f,player2.getStrength()/2,0,-player2.getStrength()/2, player2.getStrength()*1.2f};
-
-
-                frisbee.setPosition(player2.getX() - 20, player2.getY()+ player2.getHeight()/2 - 16);
-
-                int y = random.nextInt(4);
-                frisbee.mPhysicsHandler.setVelocity(-this.player2.getStrength(), velY[y]);
-
-
-                this.frisbee.setVisible(true);
-                timePlayer2Frisbee = 0;
-            }
-
-        }
-
-
-        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH || this.status == STATUS_PLAYER2_FRISBEE) {
-
-            //Move player1
-            float x = this.player1.getX();
-            float y = this.player1.getY();
-
-            if ((this.lastMove == MOVE_RIGHT)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
-                x += this.player1.getVel() * pSecondsElapsed;
-
-
-            } else if ((this.lastMove == MOVE_LEFT)||(this.lastMove == MOVE_UP_LEFT)||(this.lastMove == MOVE_DOWN_LEFT)) {
-                x -= this.player1.getVel() * pSecondsElapsed;
-
-            }
-
-
-            if ((this.lastMove == MOVE_UP)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_UP_LEFT)) {
-                y -= this.player1.getVel() * pSecondsElapsed;
-
-            } else if ((this.lastMove == MOVE_DOWN)||(this.lastMove == MOVE_DOWN_LEFT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
-                y += this.player1.getVel() * pSecondsElapsed;
-
-            }
-
-            //Check limits player 1
-            if (x+player1.getWidth()>gameField.getLimitMiddle()){
-                x = gameField.getLimitMiddle()-player1.getWidth();
-            } else if (x<gameField.getLimitLeft()){
-                x = gameField.getLimitLeft();
-            }
-
-            if (y<gameField.getLimitUp()){
-                y = gameField.getLimitUp();
-            } else if (y+player1.getHeight()>gameField.getLimitDown()){
-                y = gameField.getLimitDown()-player1.getHeight();
-            }
-
-
-            this.player1.setPosition(x, y);
-        }
-
-        if (this.status == STATUS_PLAYER1_LAUNCH || this.status == STATUS_PLAYER2_LAUNCH || this.status == STATUS_PLAYER1_FRISBEE) {
-            //Move player2
-            float x = this.player2.getX();
-            if (atacking) {
-                x -= this.player2.getVel() * pSecondsElapsed;
-            } else {
-                x += this.player2.getVel() * pSecondsElapsed;
-            }
-
-            //5% chance of change direction
-            if (random.nextInt(100)<5){
-                atacking = ! atacking;
-            }
-
-
-
-            float fy = this.frisbee.getY()+this.frisbee.getHeight()/2;
-            float p2y = this.player2.getY()+this.player2.getHeight()/2;
-            float y = this.player2.getY();
-
-
-            if (fy<p2y){
-                if (p2y-fy>this.player2.getHeight()/2){
-                    y -= this.player2.getVel() * pSecondsElapsed;
-                }
-            }
-
-            if (fy>p2y){
-                if (fy-p2y>this.player2.getHeight()/2){
-                    y += this.player2.getVel() * pSecondsElapsed;
-                }
-            }
-
-
-            //Check limits
-            if (x<gameField.getLimitMiddle()){
-                x = gameField.getLimitMiddle();
-            } else if (x+player2.getWidth()>gameField.getLimitRight()){
-                x = gameField.getLimitRight() - player2.getWidth();
-            }
-
-            if (y<gameField.getLimitUp()){
-                y = gameField.getLimitUp();
-            } else if (y+player2.getHeight()>gameField.getLimitDown()){
-                y = gameField.getLimitDown()-player2.getHeight();
-            }
-
-            this.player2.setPosition(x, y);
-        }
-
-        if (this.status == STATUS_PLAYER2_LAUNCH) {
-            //Frisbee catch player 1
-            if (this.frisbee.collidesWith(this.player1)){
-                this.status = STATUS_PLAYER1_FRISBEE;
-                this.frisbee.setVisible(false);
-            }
-        }
-
-        if (this.status == STATUS_PLAYER1_LAUNCH) {
-            //Frisbee catch player 2
-            if (this.frisbee.collidesWith(this.player2)){
-                this.status = STATUS_PLAYER2_FRISBEE;
-                this.frisbee.setVisible(false);
-            }
-        }
-
-        //Launch frisbee
-        if (this.status == STATUS_PLAYER1_PRE_LAUNCH) {
-            this.status = STATUS_PLAYER1_LAUNCH;
-            float velY = 0;
-
-            if (this.lastMove == MOVE_UP_LEFT || this.lastMove == MOVE_UP) {
-                velY = -this.player1.getStrength() * 1.2f;
-            }
-
-            if (this.lastMove == MOVE_UP_RIGHT) {
-                velY = -this.player1.getStrength() / 2;
-            }
-
-            if (this.lastMove == MOVE_RIGHT || this.lastMove == MOVE_LEFT) {
-                velY = 0;
-            }
-
-            if (this.lastMove == MOVE_DOWN_RIGHT) {
-                velY = this.player1.getStrength() / 2;
-            }
-
-            if (this.lastMove == MOVE_DOWN || this.lastMove == MOVE_DOWN_LEFT) {
-                velY = this.player1.getStrength() * 1.2f;
-            }
-
-
-            frisbee.setPosition(player1.getX()+ player1.getWidth()+5, player1.getY()+ player1.getHeight()/2 - 16);
-            frisbee.mPhysicsHandler.setVelocity(this.player1.getStrength(), velY);
-
-
-            this.frisbee.setVisible(true);
-        }
-
-
-
+        status = gameEngine.mainLoop(this, pSecondsElapsed, status, lastMove, buttonPresed);
+        buttonPresed = false;
     }
 
     public void button1() {
         if (this.status == STATUS_PLAYER1_FRISBEE) {
-            this.status = STATUS_PLAYER1_PRE_LAUNCH;
+            this.buttonPresed = true;
         }
     }
 
@@ -432,10 +271,10 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-        final float centerX = (GameOneActivity.CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
-        final float centerY = (GameOneActivity.CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
+        final float centerX = (CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
+        final float centerY = (CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
 
-        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager(), gameField);
+        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_FRISBEE).attachChild(frisbee);
         frisbee.setVisible(false);
 
@@ -446,7 +285,7 @@ public class GameOneActivity extends BaseGameActivity {
 
         player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
-        player2.setVel(150);
+        player2.setVel(300);
 
         debugText = new Text(0, 100, this.mFont, "                                                                                    ", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);
@@ -549,50 +388,5 @@ public class GameOneActivity extends BaseGameActivity {
     private void debug(Object text) {
         GameOneActivity.this.debugText.setText(""+text);
     }
-
-
-
-
-    // ===========================================================
-    // Inner and Anonymous Classes
-    // ===========================================================
-
-    private static class Frisbee extends Sprite {
-        private final PhysicsHandler mPhysicsHandler;
-        GameField gameField;
-
-        public Frisbee(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager, GameField gameField) {
-            super(pX, pY, pTextureRegion, pVertexBufferObjectManager);
-            this.mPhysicsHandler = new PhysicsHandler(this);
-            this.registerUpdateHandler(this.mPhysicsHandler);
-            this.gameField = gameField;
-        }
-
-        @Override
-        protected void onManagedUpdate(final float pSecondsElapsed) {
-            if(this.mX < gameField.getLimitLeft()) {
-                this.mX = gameField.getLimitLeft();
-                this.mPhysicsHandler.setVelocity(0,0);
-
-            } else if(this.mX + this.getWidth() > gameField.getLimitRight()) {
-                this.mX = gameField.getLimitRight() - this.getWidth();
-                this.mPhysicsHandler.setVelocity(0, 0);
-            }
-
-            if(this.mY < gameField.getLimitUp()) {
-                this.mY = gameField.getLimitUp();
-                this.mPhysicsHandler.setVelocityY(-this.mPhysicsHandler.getVelocityY());
-            } else if(this.mY + this.getHeight() > gameField.getLimitDown()) {
-                this.mY = gameField.getLimitDown() - this.getHeight();
-                this.mPhysicsHandler.setVelocityY(-this.mPhysicsHandler.getVelocityY());
-            }
-            super.onManagedUpdate(pSecondsElapsed);
-        }
-    }
-
-
-
-
-
 
 }
