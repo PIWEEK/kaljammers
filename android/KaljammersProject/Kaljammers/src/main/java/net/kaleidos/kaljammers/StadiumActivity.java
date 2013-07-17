@@ -36,6 +36,8 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
     protected static final int MENU_TWO = 2;
     protected static final int MENU_THREE = 3;
     protected static final int MENU_FOUR = 4;
+    protected static final int MENU_FIVE = 5;
+    protected static final int MENU_SIX = 6;
 
     // ===========================================================
     // Fields
@@ -52,8 +54,6 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
 
     private Font mFont;
 
-    private ITextureRegion mFaceTextureRegion;
-    private ITextureRegion mBackgroundTextureRegion;
 
 
 
@@ -107,17 +107,29 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
                 return true;
         }
         if (pMenuItem.getID() == MENU_ONE) {
-                GameOneActivity.SelectedStadium = 1;
+           GameOneActivity.SelectedStadium = 1;
         }
+
         if (pMenuItem.getID() == MENU_TWO) {
             GameOneActivity.SelectedStadium = 2;
         }
+
         if (pMenuItem.getID() == MENU_THREE) {
             GameOneActivity.SelectedStadium = 3;
         }
+
         if (pMenuItem.getID() == MENU_FOUR) {
             GameOneActivity.SelectedStadium = 4;
         }
+
+        if (pMenuItem.getID() == MENU_FIVE) {
+            GameOneActivity.SelectedStadium = 5;
+        }
+
+        if (pMenuItem.getID() == MENU_SIX) {
+            GameOneActivity.SelectedStadium = 6;
+        }
+
 
         if (SelectedGame == 1){
             GameOneActivity.gameEngine = new GameEngineOnePlayer();
@@ -141,37 +153,51 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
         Color pSelectedColor = new Color(0.5f, 0.5f, 0.5f);
         Color pUnselectedColor = new Color(1f, 0f, 0f);
 
+        Font menuFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 128, 128, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+        menuFont.load();
+
 
         final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_ONE, mFont, "STADIUM 1", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, menuFont, "London", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(onePMenuItem);
 
         final IMenuItem twoPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_TWO, mFont, "STADIUM 2", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_TWO, menuFont, "Madrid", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(twoPMenuItem);
 
         final IMenuItem threePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_THREE, mFont, "STADIUM 3", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_THREE, menuFont, "París", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(threePMenuItem);
 
 
         final IMenuItem fourPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_FOUR, mFont, "STADIUM 4", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_FOUR, menuFont, "New York", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(fourPMenuItem);
 
+        final IMenuItem fivePMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_FIVE, menuFont, "Hawaii", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(fivePMenuItem);
+
+        final IMenuItem sixPMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_SIX, menuFont, "Space", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(sixPMenuItem);
 
 
         final IMenuItem quitMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_QUIT, mFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_QUIT, menuFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(quitMenuItem);
 

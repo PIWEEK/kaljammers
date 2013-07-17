@@ -83,16 +83,17 @@ public class GameField {
             case 4:
                 this.imageId = R.drawable.stadium3;
                 break;
+            case 5:
+                this.imageId = R.drawable.stadium4;
+                this.limitMiddle = 400;
+                this.limitUp = 60;
+                this.limitDown = 370;
+                break;
+            case 6:
+                this.imageId = R.drawable.stadium5;
+                this.limitDown = 480;
+
         }
 
     }
-
-
-
-
-
-
-
-
-
 }
