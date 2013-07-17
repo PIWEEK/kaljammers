@@ -67,7 +67,7 @@ public class GameOneActivity extends BaseGameActivity {
     private static final int LAYER_COUNT = 4;
 
 
-    private static final int FIELD_LIMIT_UP = 50;
+
 
 
     private static final int MOVE_NONE = 0;
@@ -115,6 +115,8 @@ public class GameOneActivity extends BaseGameActivity {
     Text score2Text;
 
     boolean atacking = true;
+
+    GameField gameField = new GameField();
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -174,7 +176,7 @@ public class GameOneActivity extends BaseGameActivity {
         BitmapTexture backgroundTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
             @Override
             public InputStream open() throws IOException {
-                return getResources().openRawResource(R.drawable.stadium);
+                return getResources().openRawResource(gameField.getImageId());
             }
         });
 
@@ -259,16 +261,35 @@ public class GameOneActivity extends BaseGameActivity {
 
             if ((this.lastMove == MOVE_RIGHT)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
                 x += this.player1.getVel() * pSecondsElapsed;
+
+
             } else if ((this.lastMove == MOVE_LEFT)||(this.lastMove == MOVE_UP_LEFT)||(this.lastMove == MOVE_DOWN_LEFT)) {
                 x -= this.player1.getVel() * pSecondsElapsed;
+
             }
 
 
             if ((this.lastMove == MOVE_UP)||(this.lastMove == MOVE_UP_RIGHT)||(this.lastMove == MOVE_UP_LEFT)) {
                 y -= this.player1.getVel() * pSecondsElapsed;
+
             } else if ((this.lastMove == MOVE_DOWN)||(this.lastMove == MOVE_DOWN_LEFT)||(this.lastMove == MOVE_DOWN_RIGHT)) {
                 y += this.player1.getVel() * pSecondsElapsed;
+
             }
+
+            //Check limits player 1
+            if (x+player1.getWidth()>gameField.getLimitMiddle()){
+                x = gameField.getLimitMiddle()-player1.getWidth();
+            } else if (x<gameField.getLimitLeft()){
+                x = gameField.getLimitLeft();
+            }
+
+            if (y<gameField.getLimitUp()){
+                y = gameField.getLimitUp();
+            } else if (y+player1.getHeight()>gameField.getLimitDown()){
+                y = gameField.getLimitDown()-player1.getHeight();
+            }
+
 
             this.player1.setPosition(x, y);
         }
@@ -304,6 +325,20 @@ public class GameOneActivity extends BaseGameActivity {
                 if (fy-p2y>this.player2.getHeight()/2){
                     y += this.player2.getVel() * pSecondsElapsed;
                 }
+            }
+
+
+            //Check limits
+            if (x<gameField.getLimitMiddle()){
+                x = gameField.getLimitMiddle();
+            } else if (x+player2.getWidth()>gameField.getLimitRight()){
+                x = gameField.getLimitRight() - player2.getWidth();
+            }
+
+            if (y<gameField.getLimitUp()){
+                y = gameField.getLimitUp();
+            } else if (y+player2.getHeight()>gameField.getLimitDown()){
+                y = gameField.getLimitDown()-player2.getHeight();
             }
 
             this.player2.setPosition(x, y);
@@ -400,7 +435,7 @@ public class GameOneActivity extends BaseGameActivity {
         final float centerX = (GameOneActivity.CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
         final float centerY = (GameOneActivity.CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
 
-        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
+        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager(), gameField);
         scene.getChildByIndex(LAYER_FRISBEE).attachChild(frisbee);
         frisbee.setVisible(false);
 
@@ -417,10 +452,10 @@ public class GameOneActivity extends BaseGameActivity {
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);
 
 
-        score1Text = new Text(325, 5, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        score1Text = new Text(325, 430, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(score1Text);
 
-        score2Text = new Text(430, 5, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        score2Text = new Text(430, 430, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(score2Text);
 
         initOnScreenControls();
@@ -431,7 +466,8 @@ public class GameOneActivity extends BaseGameActivity {
 
 
     private void initOnScreenControls() {
-        final DigitalOnScreenControl digitalOnScreenControl = new DigitalOnScreenControl(0, CAMERA_HEIGHT - this.mOnScreenControlBaseTextureRegion.getHeight(), this.camera, this.mOnScreenControlBaseTextureRegion, this.mOnScreenControlKnobTextureRegion, 0.1f, this.getVertexBufferObjectManager(), new DigitalOnScreenControl.IOnScreenControlListener() {
+        final DigitalOnScreenControl digitalOnScreenControl = new DigitalOnScreenControl(20, CAMERA_HEIGHT - this.mOnScreenControlBaseTextureRegion.getHeight()-10, this.camera,
+                this.mOnScreenControlBaseTextureRegion, this.mOnScreenControlKnobTextureRegion, 0.1f, this.getVertexBufferObjectManager(), new DigitalOnScreenControl.IOnScreenControlListener() {
             @Override
             public void onControlChange(final BaseOnScreenControl pBaseOnScreenControl, final float pValueX, final float pValueY) {
 
@@ -468,7 +504,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
         /* Create the button and add it to the scene. */
-        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 100, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight()-20,
+        final Sprite button1 = new ButtonSprite(CAMERA_WIDTH - 100, CAMERA_HEIGHT - this.mOnScreenButton1TextureRegion.getHeight()-30,
                 this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.mOnScreenButton1TextureRegion, this.getVertexBufferObjectManager(),
                 new ButtonSprite.OnClickListener() {
 
@@ -523,29 +559,31 @@ public class GameOneActivity extends BaseGameActivity {
 
     private static class Frisbee extends Sprite {
         private final PhysicsHandler mPhysicsHandler;
+        GameField gameField;
 
-        public Frisbee(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
+        public Frisbee(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager, GameField gameField) {
             super(pX, pY, pTextureRegion, pVertexBufferObjectManager);
             this.mPhysicsHandler = new PhysicsHandler(this);
             this.registerUpdateHandler(this.mPhysicsHandler);
+            this.gameField = gameField;
         }
 
         @Override
         protected void onManagedUpdate(final float pSecondsElapsed) {
-            if(this.mX < 0) {
-                this.mX = 0;
+            if(this.mX < gameField.getLimitLeft()) {
+                this.mX = gameField.getLimitLeft();
                 this.mPhysicsHandler.setVelocity(0,0);
 
-            } else if(this.mX + this.getWidth() > GameOneActivity.CAMERA_WIDTH) {
-                this.mX = GameOneActivity.CAMERA_WIDTH - this.getWidth();
+            } else if(this.mX + this.getWidth() > gameField.getLimitRight()) {
+                this.mX = gameField.getLimitRight() - this.getWidth();
                 this.mPhysicsHandler.setVelocity(0, 0);
             }
 
-            if(this.mY < FIELD_LIMIT_UP) {
-                this.mY = FIELD_LIMIT_UP;
+            if(this.mY < gameField.getLimitUp()) {
+                this.mY = gameField.getLimitUp();
                 this.mPhysicsHandler.setVelocityY(-this.mPhysicsHandler.getVelocityY());
-            } else if(this.mY + this.getHeight() > GameOneActivity.CAMERA_HEIGHT) {
-                this.mY = GameOneActivity.CAMERA_HEIGHT - this.getHeight();
+            } else if(this.mY + this.getHeight() > gameField.getLimitDown()) {
+                this.mY = gameField.getLimitDown() - this.getHeight();
                 this.mPhysicsHandler.setVelocityY(-this.mPhysicsHandler.getVelocityY());
             }
             super.onManagedUpdate(pSecondsElapsed);
