@@ -164,6 +164,7 @@ public class GameOneActivity extends BaseGameActivity {
     public EngineOptions onCreateEngineOptions() {
         camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
+
         gameField.setImageId(this.SelectedStadium);
         final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
         engineOptions.getTouchOptions().setNeedsMultiTouch(true);
@@ -284,7 +285,16 @@ public class GameOneActivity extends BaseGameActivity {
         player1 = new Player(0, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player1);
         player1.setPlayer1(true);
-        player1.setVel(300);
+        player1.setVel(350);
+
+        if ((this.SelectedStadium == 3) || (this.SelectedStadium == 5)){
+            player1.setVel(250);
+        }
+        if (this.SelectedStadium == 6){
+            player1.setVel(600);
+        }
+
+
 
         player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
