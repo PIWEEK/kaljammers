@@ -1,5 +1,9 @@
 package net.kaleidos.kaljammers;
 
+import android.util.Log;
+
+import java.io.IOException;
+
 /**
  * Created by palba on 17/07/13.
  */
@@ -9,8 +13,16 @@ public class GameEngineTwoPlayers extends GameEngine{
 
 
     public GameEngineTwoPlayers(){
+        Log.e("-------------------------------KALJAMMERS-------------------", "Before connect");
         clientSocket = new ClientSocket();
         clientSocket.connect();
+        clientSocket.sendClientId(1000);
+        try {
+            //Read numclients
+            clientSocket.getReader().readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -21,6 +33,8 @@ public class GameEngineTwoPlayers extends GameEngine{
         Frisbee frisbee = game.getFrisbee();
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
+
+        frisbee.setVisible(true);
 
         SendMessageSocket sendMessageSocket = new SendMessageSocket();
 
@@ -33,12 +47,16 @@ public class GameEngineTwoPlayers extends GameEngine{
 
         GetMessageSocket message = clientSocket.getMessage();
 
-        player1.setPosition(message.getPlayer1X(), message.getPlayer1Y());
-        player2.setPosition(message.getPlayer2X(), message.getPlayer2Y());
-        frisbee.setPosition(message.getFrisbeeX(), message.getFrisbeeY());
+        if (message != null) {
+            player1.setPosition(message.getPlayer1X(), message.getPlayer1Y());
+            player2.setPosition(message.getPlayer2X(), message.getPlayer2Y());
+            frisbee.setPosition(message.getFrisbeeX(), message.getFrisbeeY());
 
 
-        return message.getFrisbeeStatus();
+            return message.getFrisbeeStatus();
+        } else {
+            return status;
+        }
     }
 
 

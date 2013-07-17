@@ -1,20 +1,36 @@
 package net.kaleidos.kaljammers;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import 	java.net.Socket;
+
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
 /**
  * Created by primicachero on 16/07/13.
  */
 public class ClientSocket {
     Socket myclient;
-    public static final String IP = "10.8.1.1";
-    public static final String PORT = "8080";
+    public static final String IP = "10.8.1.11";
+    public static final String PORT = "4444";
+    private DataOutputStream dos;
+    private DataInputStream dis;
+
+    private BufferedReader reader;
+
+    public BufferedReader getReader() {
+        return reader;
+    }
 
     public boolean connect(){
         int finalPort = Integer.valueOf(PORT);
         try{
             myclient =  new Socket(IP,finalPort);
             if (myclient.isConnected()){
+                this.dos = new DataOutputStream(myclient.getOutputStream());
+                this.dis = new DataInputStream(myclient.getInputStream());
+                this.reader = new BufferedReader(new InputStreamReader(dis));
                 return true;
             }else  {
                 return false;
@@ -36,26 +52,64 @@ public class ClientSocket {
             return false;
         }
     }
-    public boolean sendMessage(SendMessageSocket message){
+
+
+    public boolean sendClientId(int id){
         try{
-            ObjectOutputStream oos = new ObjectOutputStream(myclient.getOutputStream());
+
             if (myclient.isConnected()){
-                oos.writeObject(message);
+                dos.writeInt(id);
+                dos.writeChar('\n');
                 return true;
             }
             else{
                 return false;
             }
         }catch(Exception e){
-                return false;
+            return false;
         }
     }
+
+
+
+    public boolean sendMessage(SendMessageSocket message){
+        try{
+            if (myclient.isConnected()){
+                dos.writeByte(message.getDirection()); //2
+                dos.writeBoolean(message.isButton1());
+                dos.writeBoolean(message.isButton2()); //2
+                dos.writeChar('\n');
+                return true;
+            }
+            else{
+                return false;
+            }
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+
     public GetMessageSocket getMessage() {
         GetMessageSocket message;
-
         try {
-            ObjectInputStream iis = new ObjectInputStream(myclient.getInputStream());
-            message = (GetMessageSocket)iis.readObject();
+            message = new GetMessageSocket();
+            message.setPlayer1X(dis.readShort());
+            message.setPlayer1Y(dis.readShort());
+            message.setPlayer2X(dis.readShort());
+            message.setPlayer2Y(dis.readShort());
+            message.setFrisbeeX(dis.readShort());
+            message.setFrisbeeY(dis.readShort());
+
+            //Read until eol
+            reader.readLine();
+
+
+
+            Log.e("KALJAMMERS", "Frisbee: "+message.getFrisbeeX()+", "+message.getFrisbeeY());
+
+
+
         }catch (Exception e){
             return null;
         }
