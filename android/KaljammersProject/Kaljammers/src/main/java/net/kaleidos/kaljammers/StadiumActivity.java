@@ -138,7 +138,7 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
             StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }else{
             Log.e("-------------------------------KALJAMMERS-------------------", "CREATING TWO PLAYERS GAME");
-            GameOneActivity.gameEngine = new GameEngineTwoPlayers();
+            GameOneActivity.gameEngine = new GameEngineSyncTwoPlayers();
             StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }
         StadiumActivity.this.finish();

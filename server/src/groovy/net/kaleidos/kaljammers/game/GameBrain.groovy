@@ -2,7 +2,7 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
 
-    final static int sleepMillis = 100
+    final static int sleepMillis = 0
 
     public static final int MOVE_NONE = 0
     public static final int MOVE_UP = 10
@@ -30,7 +30,6 @@ class GameBrain {
     Coordinate coordF = new Coordinate(x:0, y:0) // x,y
     FrisbeeStatus statusF = FrisbeeStatus.AIR // 0,1,2
 
-    def sleepMillis = 0
 
     Long gameTime = Calendar.instance.time.time
 

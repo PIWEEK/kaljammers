@@ -12,7 +12,7 @@ import java.net.Socket;
  */
 public class ClientSocket {
     Socket myclient;
-    public static final String IP = "10.8.1.11";
+    public static final String IP = "192.168.1.13";
     public static final String PORT = "4444";
     private DataOutputStream dos;
     private DataInputStream dis;
@@ -75,9 +75,9 @@ public class ClientSocket {
     public boolean sendMessage(SendMessageSocket message){
         try{
             if (myclient.isConnected()){
-                dos.writeByte(message.getDirection()); //2
+                dos.writeByte((byte) message.getDirection());
                 dos.writeBoolean(message.isButton1());
-                dos.writeBoolean(message.isButton2()); //2
+                dos.writeBoolean(message.isButton2());
                 dos.writeChar('\n');
                 return true;
             }
