@@ -30,7 +30,7 @@ class KaljammersServer {
                     
                     while (true) {
                         buffer = reader.readLine()
-                        println "1: $buffer"
+                        println "1: $buffer. size: ${buffer.size()}"
                         
                         def actionP1 = [direction:(Integer.valueOf(buffer[0])), 
                                         b1:(Integer.valueOf(buffer[1])), 
@@ -38,8 +38,19 @@ class KaljammersServer {
                         
                         def move = gameBrain.gameProcess(actionP1, null)
                         
+                        //[info.coordP1.x, info.coordP1.y, info.coordP2.x, info.coordP2.y, 
+                        // info.coordF.x, info.coordF.y, info.statusF.ordinal()] as byte[]
+                        
                         println "$move"
-                        output << "$move\n"
+                        def dos = new DataOutputStream(output)
+                        dos.writeShort(move.coordP1.x) //2
+                        dos.writeShort(move.coordP1.y)
+                        dos.writeShort(move.coordP2.x)
+                        dos.writeShort(move.coordP2.y)
+                        dos.writeShort(move.coordF.x)
+                        dos.writeShort(move.coordF.y)
+                        dos << move.statusF.ordinal()
+                        dos << "\n"
                     }
 
                     

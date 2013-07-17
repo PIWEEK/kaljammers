@@ -25,17 +25,13 @@ class GameBrain {
      * return Map with [coordP1:[x,y], coordP2:[x,y], coordF:[x,y], statusF:{0..2}
      */ 
     def gameProcess(actionP1, actionP2) {
-        
         // game logic
         def info = calculateAction(actionP1, actionP2)
         
-        // info
-        def infoByte = convertInfoToByte(info)
-
         // game time
         waitGameTime()
         
-        return infoByte
+        return info
     }
      
      
@@ -51,6 +47,7 @@ class GameBrain {
     }
     
     def calculateAction(actionP1, actionP2) {
+        
         // p1
         coordP1.x = 800 //actionP1.direction
         coordP1.y = 480
@@ -65,16 +62,6 @@ class GameBrain {
         println "info: ${info}"
         
         return info
-    }
-    
-    def convertInfoToByte(info)  {
-        // [coordP1, coordP2, coordF, statusF]
-        byte[] infoByte = [info.coordP1.x, info.coordP1.y, info.coordP2.x, info.coordP2.y, 
-                            info.coordF.x, info.coordF.y, info.statusF.ordinal()] as byte[]
-
-        println "size: ${infoByte.size()}"
-        
-        return infoByte
     }
 }
 
