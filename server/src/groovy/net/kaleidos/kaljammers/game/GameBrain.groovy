@@ -2,6 +2,8 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
 
+    final static int sleepMillis = 100
+
     public static final int MOVE_NONE = 0
     public static final int MOVE_UP = 10
     public static final int MOVE_UP_RIGHT = 11
@@ -40,7 +42,6 @@ class GameBrain {
     def gameField = [limitUp:0, limitRight:800, limitDown:430, limitLeft:0, limitMiddle:400]
     def game = [score1:0, score2:0]
     int status = STATUS_PLAYER1_FRISBEE;
-
 
     private static final INSTANCE = new GameBrain()
     static getInstance(){ return INSTANCE }
