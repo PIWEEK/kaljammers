@@ -120,9 +120,11 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
         }
 
         if (SelectedGame == 1){
+            GameOneActivity.gameEngine = new GameEngineOnePlayer();
             StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }else{
-            StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameActivity.class));
+            GameOneActivity.gameEngine = new GameEngineTwoPlayers();
+            StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }
         StadiumActivity.this.finish();
         return true;

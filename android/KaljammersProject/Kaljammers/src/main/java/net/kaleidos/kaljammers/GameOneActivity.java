@@ -90,6 +90,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
+
     float timePlayer2Frisbee = 0;
 
     Random random = new Random();
@@ -117,7 +118,7 @@ public class GameOneActivity extends BaseGameActivity {
     Text score2Text;
 
     GameField gameField = new GameField();
-    GameEngine gameEngine = new GameEngineOnePlayer();
+    public static GameEngine gameEngine;
 
 
     public GameField getGameField() {

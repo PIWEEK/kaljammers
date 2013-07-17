@@ -11,9 +11,6 @@ import java.io.Serializable;
  */
 
 public class GetMessageSocket implements Serializable {
-    // type frisbee status
-    public enum FrisbeeStatus { PLAYER1, PLAYER2, AIR, END };
-
     // Coordenate X player 1
     private int player1X;
     // Coordenate Y player 1
@@ -27,7 +24,7 @@ public class GetMessageSocket implements Serializable {
     // Coordenate Y frisbee
     private int frisbeeY;
     // frisbee status : player 1, player 2 , air
-    private FrisbeeStatus frisbeeStatus;
+    private byte frisbeeStatus;
 
     // getters and setters
 
@@ -49,7 +46,7 @@ public class GetMessageSocket implements Serializable {
     public int getFrisbeeY(){
         return frisbeeY;
     }
-    public FrisbeeStatus getFrisbeeStatus(){
+    public byte getFrisbeeStatus(){
         return frisbeeStatus;
     }
     public void setPlayer1X (int player1X){
@@ -71,7 +68,7 @@ public class GetMessageSocket implements Serializable {
         this.frisbeeY = frisbeeY;
     }
 
-    public void setFrisbeeStatus(FrisbeeStatus frisbeeStatus){
+    public void setFrisbeeStatus(byte frisbeeStatus){
         this.frisbeeStatus = frisbeeStatus;
     }
 
