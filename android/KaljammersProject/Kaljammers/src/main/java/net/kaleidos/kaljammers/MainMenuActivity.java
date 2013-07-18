@@ -2,7 +2,8 @@ package net.kaleidos.kaljammers;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-
+import org.andengine.opengl.texture.ITexture;
+import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -21,7 +22,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.color.Color;
-
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 
 public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuItemClickListener {
     // ===========================================================
@@ -50,6 +51,12 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected Scene mBackgroundScene;
 
     private Font mFont;
+    private Font mDroidFont;
+    private Font mDroidFontMax;
+    private Font mKingdomOfHeartsFont;
+    private Font mNeverwinterNightsFont;
+    private Font mPlokFont;
+    private Font mUnrealTournamenFont;
 
     private ITextureRegion mFaceTextureRegion;
     private ITextureRegion mBackgroundTextureRegion;
@@ -77,6 +84,33 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
     @Override
     public void onCreateResources() {
+
+        FontFactory.setAssetBasePath("font/");
+
+
+        final ITexture fontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+        this.mDroidFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Droid.ttf", 48, true, android.graphics.Color.WHITE);
+        this.mDroidFont.load();
+
+        this.mDroidFontMax = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Droid.ttf", 58, true, android.graphics.Color.WHITE);
+        this.mDroidFontMax.load();
+
+
+        this.mKingdomOfHeartsFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "KingdomOfHearts.ttf", 48, true, android.graphics.Color.WHITE);
+        this.mKingdomOfHeartsFont.load();
+
+        this.mNeverwinterNightsFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "NeverwinterNights.ttf", 48, true, android.graphics.Color.WHITE);
+        this.mNeverwinterNightsFont.load();
+
+        this.mPlokFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Plok.ttf", 48, true, android.graphics.Color.WHITE);
+        this.mPlokFont.load();
+
+        this.mUnrealTournamenFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "UnrealTournament.ttf", 48, true, android.graphics.Color.WHITE);
+        this.mUnrealTournamenFont.load();
+
+
+
+
         this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 64);
         this.mFont.load();
     }
@@ -129,25 +163,25 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
 
         Color pSelectedColor = new Color(0.5f, 0.5f, 0.5f);
-        Color pUnselectedColor = new Color(1f, 0f, 0f);
-
+        Color pUnselectedColor = Color.WHITE;
+        Color pQuitColor = Color.RED;
 
         final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_ONE, mFont, "START ONE PLAYER", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, mDroidFont, "START ONE PLAYER", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(onePMenuItem);
 
         final IMenuItem twoPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_TWO, mFont, "START TWO PLAYERS", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_TWO, mDroidFont, "START TWO PLAYERS", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(twoPMenuItem);
 
 
         final IMenuItem quitMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_QUIT, mFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_QUIT, mDroidFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pQuitColor);
 
         this.mMenuScene.addMenuItem(quitMenuItem);
 

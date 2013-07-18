@@ -18,6 +18,8 @@ import org.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.ITexture;
+import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
@@ -54,7 +56,7 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
     protected MenuScene mMenuScene;
     protected Scene mBackgroundScene;
 
-    private Font mFont;
+    private Font mFont, mUnrealTournamenFont, mDroidFont;
 
 
 
@@ -154,56 +156,66 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
 
 
         Color pSelectedColor = new Color(0.5f, 0.5f, 0.5f);
-        Color pUnselectedColor = new Color(1f, 0f, 0f);
+        Color pUnselectedColor = Color.WHITE;
+        Color pQuitColor = Color.RED;
 
-        Font menuFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 128, 128, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
-        menuFont.load();
+        FontFactory.setAssetBasePath("font/");
 
+
+        final ITexture fontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+
+        this.mUnrealTournamenFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "UnrealTournament.ttf", 38, true, android.graphics.Color.WHITE);
+        this.mUnrealTournamenFont.load();
+
+        this.mDroidFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Droid.ttf", 38, true, android.graphics.Color.WHITE);
+        this.mDroidFont.load();
+
+        this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 44);
+        this.mFont.load();
 
         final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_ONE, menuFont, "London", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, mUnrealTournamenFont, "London", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(onePMenuItem);
 
         final IMenuItem twoPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_TWO, menuFont, "Madrid", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_TWO, mUnrealTournamenFont, "Madrid", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(twoPMenuItem);
 
         final IMenuItem threePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_THREE, menuFont, "París", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_THREE, mUnrealTournamenFont, "París", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(threePMenuItem);
 
 
         final IMenuItem fourPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_FOUR, menuFont, "New York", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_FOUR, mUnrealTournamenFont, "New York", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(fourPMenuItem);
 
         final IMenuItem fivePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_FIVE, menuFont, "Hawaii", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_FIVE, mUnrealTournamenFont, "Hawaii", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(fivePMenuItem);
 
         final IMenuItem sixPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_SIX, menuFont, "Space", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_SIX, mUnrealTournamenFont, "Space", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(sixPMenuItem);
 
 
         final IMenuItem quitMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_QUIT, menuFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_QUIT, mUnrealTournamenFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pQuitColor);
 
         this.mMenuScene.addMenuItem(quitMenuItem);
-
 
 
         this.mMenuScene.buildAnimations();
