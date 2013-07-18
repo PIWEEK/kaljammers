@@ -14,7 +14,9 @@ public class Player extends AnimatedSprite {
     public final static String SPRITE_PABLO = "gpx/pablo.png";
     public final static String SPRITE_PRIMI = "gpx/primi.png";
     public final static String SPRITE_TONYO = "gpx/tonyo.png";
-    public final static String SPRITE_GORDO = "gpx/tonyo.png";
+    public final static String SPRITE_GORDO = "gpx/player4.png";
+    public final static String SPRITE_OPPONENT = "gpx/player4.png";
+    public final static String SPRITE_SPACE = "gpx/space.png";
 
     private float vel = STANDARD_VEL;
     private float strength = STANDARD_STRENGTH;

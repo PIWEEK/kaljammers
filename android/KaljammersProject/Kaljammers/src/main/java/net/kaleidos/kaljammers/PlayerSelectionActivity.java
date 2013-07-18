@@ -216,7 +216,7 @@ enum Players {
     PLAYER1(1.5f,0.5f,Player.SPRITE_PRIMI),
     PLAYER2(1,1,Player.SPRITE_PRIMI),
     PLAYER3(1,1,Player.SPRITE_PRIMI),
-    PLAYER4(0.5f,1.5f,Player.SPRITE_PRIMI);
+    PLAYER4(0.5f,1.5f,Player.SPRITE_GORDO);
 
     private float vel;
     private float strenght;

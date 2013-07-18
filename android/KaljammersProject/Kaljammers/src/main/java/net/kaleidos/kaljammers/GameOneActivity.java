@@ -207,18 +207,14 @@ public class GameOneActivity extends BaseGameActivity {
         this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, SelectedPlayerSprite, 0, 0, 4, 4);
         textureAtlas.load();
 
-        BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
-        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, Player.SPRITE_GORDO, 0, 0, 4, 4);
-        textureAtlas2.load();
-
-
-        if (this.SelectedStadium == 6){
-            textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
-            this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/space.png", 0, 0, 4, 4);
-            textureAtlas2.load();
+        String sprite2 = Player.SPRITE_OPPONENT;
+        if (this.SelectedStadium == 6) {
+           sprite2 = Player.SPRITE_SPACE;
         }
 
-
+        BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, sprite2, 0, 0, 4, 4);
+        textureAtlas2.load();
 
         this.mOnScreenControlTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 128, TextureOptions.BILINEAR);
         this.mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromResource(this.mOnScreenControlTexture, this, R.drawable.onscreen_control_base, 0, 0);
