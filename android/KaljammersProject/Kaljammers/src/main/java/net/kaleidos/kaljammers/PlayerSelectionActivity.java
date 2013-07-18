@@ -18,6 +18,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.andengine.util.color.Color;
 
 public class PlayerSelectionActivity extends SimpleBaseGameActivity {
     // ===========================================================
@@ -83,22 +84,22 @@ public class PlayerSelectionActivity extends SimpleBaseGameActivity {
     public void onCreateResources() {
 
 
-        this.mNinjaTexture = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
-        this.mPrimiTexture = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
-        this.mTonyoTexture = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
-        this.mPabloTexture = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
 
+        BitmapTextureAtlas textureAtlas1 = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
+        this.mNinjaTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas1, this, "gpx/ninja_detail.png", 0, 0);
+        textureAtlas1.load();
 
-        this.mNinjaTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromResource(this.mNinjaTexture, this, R.drawable.ninja_detail, 0, 0);
-        this.mPrimiTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromResource(this.mPrimiTexture, this, R.drawable.primi_detail, 0, 0);
-        this.mTonyoTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromResource(this.mTonyoTexture, this, R.drawable.tonyo_detail, 0, 0);
-        this.mPabloTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromResource(this.mPabloTexture, this, R.drawable.pablo_detail, 0, 0);
+        BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
+        this.mPrimiTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas2, this, "gpx/primi_detail.png", 0, 0);
+        textureAtlas2.load();
 
-        this.mNinjaTexture.load();
-        this.mPrimiTexture.load();
-        this.mTonyoTexture.load();
-        this.mPabloTexture.load();
+        BitmapTextureAtlas textureAtlas3 = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
+        this.mTonyoTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas3, this, "gpx/tonyo_detail.png", 0, 0);
+        textureAtlas3.load();
 
+        BitmapTextureAtlas textureAtlas4 = new BitmapTextureAtlas(this.getTextureManager(), 400, 240, TextureOptions.BILINEAR);
+        this.mPabloTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(textureAtlas4, this, "gpx/pablo_detail.png", 0, 0);
+        textureAtlas4.load();
 
     }
 
@@ -107,7 +108,7 @@ public class PlayerSelectionActivity extends SimpleBaseGameActivity {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
         this.mMainScene = new Scene();
-        this.mMainScene.setBackground(new Background(0, 0, 0));
+        this.mMainScene.setBackground(new Background(Color.WHITE));
 
 
         /* Create the button and add it to the scene. */
