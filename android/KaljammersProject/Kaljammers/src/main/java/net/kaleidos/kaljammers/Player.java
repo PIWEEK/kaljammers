@@ -7,8 +7,14 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 public class Player extends AnimatedSprite {
 
+
     private static final float STANDARD_VEL = 350f;
     private static final float STANDARD_STRENGTH = 600f;
+
+    public final static String SPRITE_PABLO = "gpx/pablo.png";
+    public final static String SPRITE_PRIMI = "gpx/primi.png";
+    public final static String SPRITE_TONYO = "gpx/tonyo.png";
+    public final static String SPRITE_GORDO = "gpx/tonyo.png";
 
     private float vel = STANDARD_VEL;
     private float strength = STANDARD_STRENGTH;
@@ -17,6 +23,11 @@ public class Player extends AnimatedSprite {
     private int lastMove = GameOneActivity.MOVE_RIGHT;
     private int numMoves = 0;
 
+    public Player(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
+        super(pX, pY, (TiledTextureRegion) pTextureRegion, pVertexBufferObjectManager);
+        this.setCurrentTileIndex(8);
+    }
+
     public boolean isPlayer1() {
         return isPlayer1;
     }
@@ -24,7 +35,6 @@ public class Player extends AnimatedSprite {
     public void setPlayer1(boolean player1) {
         isPlayer1 = player1;
     }
-
 
     public float getVel() {
         return vel;
@@ -38,10 +48,18 @@ public class Player extends AnimatedSprite {
         return strength;
     }
 
-    public Player(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
-        super(pX, pY, (TiledTextureRegion) pTextureRegion, pVertexBufferObjectManager);
-        this.setCurrentTileIndex(8);
+    public void setStrength(float strength) {
+        this.strength = strength;
     }
+
+    public void applyFactorVel(float f) {
+        this.vel = this.vel * f;
+    }
+
+    public void applyFactorStrength(float f) {
+        this.strength = this.strength * f;
+    }
+
 
     public void animate(int direction){
         boolean change=false;
@@ -109,14 +127,6 @@ public class Player extends AnimatedSprite {
             current = min;
         }
         this.setCurrentTileIndex(current);
-    }
-
-    public void applyFactorVel(float f) {
-        this.vel = this.vel * f;
-    }
-
-    public void applyFactorStrength(float f) {
-        this.strength = this.strength * f;
     }
 }
 

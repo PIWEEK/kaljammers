@@ -130,6 +130,7 @@ public class PlayerSelectionActivity extends SimpleBaseGameActivity implements M
         GameOneActivity.SelectedPlayer = player.ordinal() + 1;
         GameOneActivity.SelectedPlayerVel = player.getVel();
         GameOneActivity.SelectedPlayerStrenght = player.getStrenght();
+        GameOneActivity.SelectedPlayerSprite = player.getSprite();
 
         PlayerSelectionActivity.this.startActivity(new Intent(PlayerSelectionActivity.this, StadiumActivity.class));
 
@@ -212,14 +213,19 @@ public class PlayerSelectionActivity extends SimpleBaseGameActivity implements M
 
 
 enum Players {
-    PLAYER1(1.5f,0.5f), PLAYER2(1,1), PLAYER3(1,1), PLAYER4(0.5f,1.5f);
+    PLAYER1(1.5f,0.5f,Player.SPRITE_PRIMI),
+    PLAYER2(1,1,Player.SPRITE_PRIMI),
+    PLAYER3(1,1,Player.SPRITE_PRIMI),
+    PLAYER4(0.5f,1.5f,Player.SPRITE_PRIMI);
 
     private float vel;
     private float strenght;
+    private String sprite;
 
-    Players(float vel, float strenght) {
+    Players(float vel, float strenght, String sprite) {
         this.vel = vel;
         this.strenght = strenght;
+        this.sprite = sprite;
     }
 
     public float getVel() {
@@ -228,5 +234,9 @@ enum Players {
 
     public float getStrenght() {
         return strenght;
+    }
+
+    public String getSprite() {
+        return sprite;
     }
 }

@@ -65,9 +65,14 @@ public class GameOneActivity extends BaseGameActivity {
     public static final int STATUS_PLAYER2_LAUNCH = 4;
 
 
+    public static int SelectedStadium = 0;
+    public static int SelectedPlayer = 0;
+    public static float SelectedPlayerVel = 1;
+    public static float SelectedPlayerStrenght = 1;
+    public static String SelectedPlayerSprite = Player.SPRITE_PABLO;
+
+
     private boolean buttonPresed = false;
-
-
 
     private ITexture mTexture;
     private ITextureRegion mFrisbeeTextureRegion;
@@ -85,14 +90,6 @@ public class GameOneActivity extends BaseGameActivity {
     private ITextureRegion mOnScreenButton1TextureRegion;
     private BitmapTextureAtlas mOnScreenButton2Texture;
     private ITextureRegion mOnScreenButton2TextureRegion;
-
-    public static int SelectedStadium = 0;
-
-
-
-    public static int SelectedPlayer = 0;
-    public static float SelectedPlayerVel = 1;
-    public static float SelectedPlayerStrenght = 1;
 
 
 
@@ -204,12 +201,14 @@ public class GameOneActivity extends BaseGameActivity {
         */
 
 
+
+
         BitmapTextureAtlas textureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
-        this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, "gpx/pablo.png", 0, 0, 4, 4);
+        this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, SelectedPlayerSprite, 0, 0, 4, 4);
         textureAtlas.load();
 
         BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
-        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/primi.png", 0, 0, 4, 4);
+        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, Player.SPRITE_GORDO, 0, 0, 4, 4);
         textureAtlas2.load();
 
 
