@@ -208,10 +208,16 @@ public class GameOneActivity extends BaseGameActivity {
         this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, "gpx/pablo.png", 0, 0, 4, 4);
         textureAtlas.load();
 
-
         BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
         this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/primi.png", 0, 0, 4, 4);
         textureAtlas2.load();
+
+
+        if (this.SelectedStadium == 6){
+            textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+            this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/space.png", 0, 0, 4, 4);
+            textureAtlas2.load();
+        }
 
 
 
