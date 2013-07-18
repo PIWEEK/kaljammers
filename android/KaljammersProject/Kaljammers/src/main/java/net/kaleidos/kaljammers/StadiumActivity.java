@@ -183,7 +183,7 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
 
 
         Color pSelectedColor = new Color(0.5f, 0.5f, 0.5f);
-        Color pUnselectedColor = Color.WHITE;
+        Color pUnselectedColor = Color.BLUE;
         Color pQuitColor = Color.RED;
 
         FontFactory.setAssetBasePath("font/");

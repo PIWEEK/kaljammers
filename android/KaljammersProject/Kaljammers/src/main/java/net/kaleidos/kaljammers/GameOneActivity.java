@@ -62,6 +62,8 @@ public class GameOneActivity extends BaseGameActivity {
     public static final int STATUS_PLAYER1_LAUNCH = 2;
     public static final int STATUS_PLAYER2_FRISBEE = 3;
     public static final int STATUS_PLAYER2_LAUNCH = 4;
+    public static final int STATUS_PLAYER1_GOAL = 5;
+    public static final int STATUS_PLAYER2_GOAL = 6;
 
 
     public static int SelectedStadium = 0;
@@ -99,6 +101,7 @@ public class GameOneActivity extends BaseGameActivity {
     int lastMove = MOVE_NONE;
 
     Font mFont;
+    Font mGoalFont;
 
     int direction;
     Scene scene;
@@ -117,6 +120,7 @@ public class GameOneActivity extends BaseGameActivity {
 
     Text score1Text;
     Text score2Text;
+    Text goalText;
 
     GameField gameField = new GameField();
     public static GameEngine gameEngine;
@@ -234,6 +238,14 @@ public class GameOneActivity extends BaseGameActivity {
         this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 48, true, Color.WHITE);
         this.mFont.load();
 
+        final ITexture fontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+
+        this.mGoalFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "font/Droid.ttf", 140, true, Color.RED);
+        this.mGoalFont.load();
+
+
+
+
         BitmapTexture backgroundTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
             @Override
             public InputStream open() throws IOException {
@@ -255,6 +267,11 @@ public class GameOneActivity extends BaseGameActivity {
     public void mainLoop(float pSecondsElapsed){
         status = gameEngine.mainLoop(this, pSecondsElapsed, status, lastMove, buttonPresed);
         buttonPresed = false;
+        if ((status == STATUS_PLAYER1_GOAL)||(status == STATUS_PLAYER2_GOAL)){
+            goalText.setVisible(true);
+        } else {
+            goalText.setVisible(false);
+        }
     }
 
     public void button1() {
@@ -332,6 +349,12 @@ public class GameOneActivity extends BaseGameActivity {
 
         score2Text = new Text(430, 430, this.mFont, "00", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(score2Text);
+
+
+
+        goalText = new Text(190, 130, this.mGoalFont, "GOAL!", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        goalText.setVisible(false);
+        scene.getChildByIndex(LAYER_TEXT).attachChild(goalText);
 
         initOnScreenControls();
 

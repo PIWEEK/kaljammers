@@ -8,6 +8,7 @@ import java.util.Random;
 public class GameEngineOnePlayer extends GameEngine{
 
     float timePlayer2Frisbee = 0;
+    float timeGoal = 0;
     boolean atacking = true;
     Random random = new Random();
 
@@ -50,6 +51,12 @@ public class GameEngineOnePlayer extends GameEngine{
                     newStatus = player2Launch(frisbee, player1);
                     break;
                 }
+            case GameOneActivity.STATUS_PLAYER1_GOAL:
+                newStatus = player1Goal(secondsElapsed);
+                break;
+            case GameOneActivity.STATUS_PLAYER2_GOAL:
+                newStatus = player2Goal(secondsElapsed);
+                break;
         }
         return newStatus;
     }
@@ -272,7 +279,7 @@ public class GameEngineOnePlayer extends GameEngine{
             //Player 2 goal
             game.setScore2((byte) (game.getScore2()+3));
 
-            status = GameOneActivity.STATUS_PLAYER1_FRISBEE;
+            status = GameOneActivity.STATUS_PLAYER1_GOAL;
             frisbee.setVisible(false);
 
             player1.setPosition(0, centerY);
@@ -283,13 +290,33 @@ public class GameEngineOnePlayer extends GameEngine{
         } else if(frisbee.getX() + frisbee.getWidth() >= gameField.getLimitRight()) {
             //Player 1 goal
             game.setScore1((byte) (game.getScore1()+3));
-            status = GameOneActivity.STATUS_PLAYER2_FRISBEE;
+            status = GameOneActivity.STATUS_PLAYER2_GOAL;
             frisbee.setVisible(false);
 
             player1.setPosition(0, centerY);
             player2.setPosition(700, centerY);
             player1.animate(GameOneActivity.MOVE_NONE);
             player2.animate(GameOneActivity.MOVE_NONE);
+        }
+        return status;
+    }
+
+    private byte player1Goal(float secondsElapsed){
+        byte status = GameOneActivity.STATUS_PLAYER1_GOAL;
+        timeGoal += secondsElapsed;
+        if (timeGoal>=2){
+            status = GameOneActivity.STATUS_PLAYER1_FRISBEE;
+            timeGoal = 0;
+        }
+        return status;
+    }
+
+    private byte player2Goal(float secondsElapsed){
+        byte status = GameOneActivity.STATUS_PLAYER2_GOAL;
+        timeGoal += secondsElapsed;
+        if (timeGoal>=0.8){
+            status = GameOneActivity.STATUS_PLAYER2_FRISBEE;
+            timeGoal = 0;
         }
         return status;
     }
