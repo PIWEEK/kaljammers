@@ -10,20 +10,26 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.TextMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TextureRegionFactory;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.color.Color;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene.IOnMenuItemClickListener {
     // ===========================================================
@@ -57,8 +63,7 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
     protected Scene mBackgroundScene;
 
     private Font mFont, mUnrealTournamenFont, mDroidFont;
-
-
+    private ITextureRegion mBackgroundTextureRegion;
 
 
     // ===========================================================
@@ -84,6 +89,25 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
     public void onCreateResources() {
         this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 64);
         this.mFont.load();
+
+
+        BitmapTexture backgroundTexture = null;
+        try {
+            backgroundTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return getResources().openRawResource(R.drawable.kaljammers_bg);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.mBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(backgroundTexture);
+        backgroundTexture.load();
+
+
+
     }
 
     @Override
@@ -91,11 +115,14 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
         this.createMenuScene();
-        this.createBackgroundScene();
+
 
 
         this.mMainScene = new Scene();
-        this.mMainScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
+        
+         /* No background color needed as we have a fullscreen background sprite. */
+        this.mMainScene.setBackgroundEnabled(false);
+        this.mMainScene.attachChild(new Sprite(0, 0, this.mBackgroundTextureRegion, this.getVertexBufferObjectManager()));
 
         this.mMainScene.setChildScene(this.mMenuScene, false, true, true);
 
@@ -225,15 +252,6 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
         this.mMenuScene.setOnMenuItemClickListener(this);
     }
 
-
-    protected void createBackgroundScene() {
-        this.mBackgroundScene = new Scene();
-
-        this.mBackgroundScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
-
-        this.mBackgroundScene.setBackgroundEnabled(true);
-
-    }
 
 
     // ===========================================================
