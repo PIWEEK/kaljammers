@@ -31,6 +31,7 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +74,6 @@ public class GameOneActivity extends BaseGameActivity {
 
     private TiledTextureRegion mPlayer1TextureRegion;
     private TiledTextureRegion mPlayer2TextureRegion;
-
     private ITextureRegion mBackgroundTextureRegion;
 
 
@@ -90,6 +90,9 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
+    public static int SelectedPlayer = 0;
+    public static float SelectedPlayerVel = 1;
+    public static float SelectedPlayerStrenght = 1;
 
 
 
@@ -184,6 +187,7 @@ public class GameOneActivity extends BaseGameActivity {
 
         this.mTexture.load();
         this.mFrisbeeTextureRegion = TextureRegionFactory.extractFromTexture(this.mTexture);
+
 
         /*
         BitmapTexture playerTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
@@ -298,20 +302,26 @@ public class GameOneActivity extends BaseGameActivity {
         player1 = new Player(0, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player1);
         player1.setPlayer1(true);
-        player1.setVel(350);
 
+         // from 350
+        float fvel = SelectedPlayerVel;
+        float fstrenght = SelectedPlayerStrenght;
         if ((this.SelectedStadium == 3) || (this.SelectedStadium == 5)){
-            player1.setVel(250);
+            fvel = fvel * 0.66f;
+        } else if (this.SelectedStadium == 6) {
+            fvel = fvel * 1.5f;
         }
-        if (this.SelectedStadium == 6){
-            player1.setVel(600);
-        }
+        player1.applyFactorVel(fvel);
+        player1.applyFactorStrength(fstrenght);
 
 
+        //Log.e(">>> "+ player1.getVel());
+        //Log.e(">>> "+ player1.getStrength());
 
         player2 = new Player(700, centerY, this.mPlayer2TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
         player2.setVel(300);
+        player2.applyFactorVel(fvel);
 
         debugText = new Text(0, 100, this.mFont, "                                                                                    ", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);

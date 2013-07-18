@@ -7,13 +7,15 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 public class Player extends AnimatedSprite {
 
-    private float vel = 50f;
-    private float strength = 600f;
+    private static final float STANDARD_VEL = 350f;
+    private static final float STANDARD_STRENGTH = 600f;
+
+    private float vel = STANDARD_VEL;
+    private float strength = STANDARD_STRENGTH;
     private boolean isPlayer1 = false;
+
     private int lastMove = GameOneActivity.MOVE_RIGHT;
     private int numMoves = 0;
-
-
 
     public boolean isPlayer1() {
         return isPlayer1;
@@ -24,8 +26,6 @@ public class Player extends AnimatedSprite {
     }
 
 
-
-
     public float getVel() {
         return vel;
     }
@@ -34,13 +34,9 @@ public class Player extends AnimatedSprite {
         this.vel = vel;
     }
 
-
-
     public float getStrength() {
         return strength;
     }
-
-
 
     public Player(final float pX, final float pY, final ITextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
         super(pX, pY, (TiledTextureRegion) pTextureRegion, pVertexBufferObjectManager);
@@ -115,5 +111,12 @@ public class Player extends AnimatedSprite {
         this.setCurrentTileIndex(current);
     }
 
+    public void applyFactorVel(float f) {
+        this.vel = this.vel * f;
+    }
+
+    public void applyFactorStrength(float f) {
+        this.strength = this.strength * f;
+    }
 }
 
