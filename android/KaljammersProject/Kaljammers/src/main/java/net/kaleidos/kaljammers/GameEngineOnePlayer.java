@@ -9,12 +9,14 @@ public class GameEngineOnePlayer extends GameEngine{
 
     float timePlayer2Frisbee = 0;
     float timeGoal = 0;
+    float sprintTime = 0;
+    int sprintDirection = -1;
     boolean atacking = true;
     Random random = new Random();
 
 
     @Override
-    public byte mainLoop(GameOneActivity game, float secondsElapsed, byte status, int lastMove, boolean buttonPresed){
+    public byte mainLoop(GameOneActivity game, float secondsElapsed, byte status, int lastMove, boolean buttonPressed){
         byte newStatus = status;
 
         GameField gameField = game.getGameField();
@@ -25,19 +27,19 @@ public class GameEngineOnePlayer extends GameEngine{
         switch (status){
             case GameOneActivity.STATUS_PLAYER1_FRISBEE:
                 movePlayer2(player2, frisbee, gameField, secondsElapsed);
-                if (buttonPresed) {
+                if (buttonPressed) {
                     newStatus = player1PreLaunch(lastMove, player1, frisbee);
                 }
                 break;
             case GameOneActivity.STATUS_PLAYER2_FRISBEE:
-                movePlayer1(player1, frisbee, gameField, lastMove, secondsElapsed);
+                movePlayer1(player1, frisbee, gameField, lastMove, buttonPressed, secondsElapsed);
                 newStatus = player2Frisbee(player2, frisbee, secondsElapsed);
                 break;
             case GameOneActivity.STATUS_PLAYER1_LAUNCH:
                 newStatus = checkGoals(player1, player2, frisbee, gameField, game);
                 if (newStatus==-1) {
                     moveFrisbee(frisbee, gameField, secondsElapsed);
-                    movePlayer1(player1, frisbee, gameField, lastMove, secondsElapsed);
+                    movePlayer1(player1, frisbee, gameField, lastMove, buttonPressed, secondsElapsed);
                     movePlayer2(player2, frisbee, gameField, secondsElapsed);
                     newStatus = player1Launch(frisbee, player2);
                 }
@@ -46,7 +48,7 @@ public class GameEngineOnePlayer extends GameEngine{
                 newStatus = checkGoals(player1, player2, frisbee, gameField, game);
                 if (newStatus==-1) {
                     moveFrisbee(frisbee, gameField, secondsElapsed);
-                    movePlayer1(player1, frisbee, gameField, lastMove, secondsElapsed);
+                    movePlayer1(player1, frisbee, gameField, lastMove, buttonPressed, secondsElapsed);
                     movePlayer2(player2, frisbee, gameField, secondsElapsed);
                     newStatus = player2Launch(frisbee, player1);
                     break;
@@ -229,26 +231,49 @@ public class GameEngineOnePlayer extends GameEngine{
      }
     
     
-    private void movePlayer1(Player player1, Frisbee frisbee, GameField gameField, int lastMove, float secondsElapsed){
+    private void movePlayer1(Player player1, Frisbee frisbee, GameField gameField, int lastMove, boolean buttonPressed, float secondsElapsed){
         //Move player1
         float x = player1.getX();
         float y = player1.getY();
 
+
+        float vel = player1.getVel();
+
+        //Sprint
+        if (sprintDirection != -1){
+            sprintTime += secondsElapsed;
+            if (sprintTime>=0.1){
+                sprintDirection = -1;
+                sprintTime = 0;
+            } else {
+                lastMove = sprintDirection;
+                vel = vel * 3;
+            }
+        } else {
+            if (buttonPressed) {
+                sprintDirection = lastMove;
+                vel = vel * 5;
+            }
+        }
+
+
+
+
         if ((lastMove == GameOneActivity.MOVE_RIGHT)||(lastMove == GameOneActivity.MOVE_UP_RIGHT)||(lastMove == GameOneActivity.MOVE_DOWN_RIGHT)) {
-            x += player1.getVel() * secondsElapsed;
+            x += vel * secondsElapsed;
 
 
         } else if ((lastMove == GameOneActivity.MOVE_LEFT)||(lastMove == GameOneActivity.MOVE_UP_LEFT)||(lastMove == GameOneActivity.MOVE_DOWN_LEFT)) {
-            x -= player1.getVel() * secondsElapsed;
+            x -= vel * secondsElapsed;
 
         }
 
 
         if ((lastMove == GameOneActivity.MOVE_UP)||(lastMove == GameOneActivity.MOVE_UP_RIGHT)||(lastMove == GameOneActivity.MOVE_UP_LEFT)) {
-            y -= player1.getVel() * secondsElapsed;
+            y -= vel * secondsElapsed;
 
         } else if ((lastMove == GameOneActivity.MOVE_DOWN)||(lastMove == GameOneActivity.MOVE_DOWN_LEFT)||(lastMove == GameOneActivity.MOVE_DOWN_RIGHT)) {
-            y += player1.getVel() * secondsElapsed;
+            y += vel * secondsElapsed;
 
         }
 
@@ -286,6 +311,8 @@ public class GameEngineOnePlayer extends GameEngine{
             player2.setPosition(700, centerY);
             player1.animate(GameOneActivity.MOVE_NONE);
             player2.animate(GameOneActivity.MOVE_NONE);
+            sprintDirection=-1;
+            sprintTime = 0;
 
         } else if(frisbee.getX() + frisbee.getWidth() >= gameField.getLimitRight()) {
             //Player 1 goal
@@ -297,6 +324,8 @@ public class GameEngineOnePlayer extends GameEngine{
             player2.setPosition(700, centerY);
             player1.animate(GameOneActivity.MOVE_NONE);
             player2.animate(GameOneActivity.MOVE_NONE);
+            sprintDirection=-1;
+            sprintTime = 0;
         }
         return status;
     }

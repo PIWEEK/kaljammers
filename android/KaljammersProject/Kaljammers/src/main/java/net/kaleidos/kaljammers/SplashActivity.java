@@ -95,7 +95,7 @@ public class SplashActivity extends SimpleBaseGameActivity{
             }
             public void onUpdate(float pSecondsElapsed) {
                 totalTime += pSecondsElapsed;
-                if (totalTime > 4){
+                if (totalTime > 3){
                     SplashActivity.this.startActivity(new Intent(SplashActivity.this, MainMenuActivity.class));
                     SplashActivity.this.finish();
                 }

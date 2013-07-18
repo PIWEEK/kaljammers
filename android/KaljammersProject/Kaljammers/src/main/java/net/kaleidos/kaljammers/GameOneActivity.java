@@ -275,9 +275,7 @@ public class GameOneActivity extends BaseGameActivity {
     }
 
     public void button1() {
-        if (this.status == STATUS_PLAYER1_FRISBEE) {
-            this.buttonPresed = true;
-        }
+         this.buttonPresed = true;
     }
 
 
