@@ -145,6 +145,7 @@ public class GameEngineOnePlayer extends GameEngine{
         if (frisbee.collidesWith(player1)){
             frisbee.setVisible(false);
             status = GameOneActivity.STATUS_PLAYER1_FRISBEE;
+            player1.animate(GameOneActivity.MOVE_NONE);
         }
         return status;
     }
@@ -157,6 +158,7 @@ public class GameEngineOnePlayer extends GameEngine{
         if (frisbee.collidesWith(player2)){
             status = GameOneActivity.STATUS_PLAYER2_FRISBEE;
             frisbee.setVisible(false);
+            player2.animate(GameOneActivity.MOVE_NONE);
         }
         return status;
     }
@@ -196,8 +198,10 @@ public class GameEngineOnePlayer extends GameEngine{
          //Check limits
          if (x<gameField.getLimitMiddle()){
              x = gameField.getLimitMiddle();
+             atacking = !atacking;
          } else if (x+player2.getWidth()>gameField.getLimitRight()){
              x = gameField.getLimitRight() - player2.getWidth();
+             atacking = !atacking;
          }
 
          if (y<gameField.getLimitUp()){
@@ -205,6 +209,13 @@ public class GameEngineOnePlayer extends GameEngine{
          } else if (y+player2.getHeight()>gameField.getLimitDown()){
              y = gameField.getLimitDown()-player2.getHeight();
          }
+
+
+        if (player2.getX()>x) {
+            player2.animate(GameOneActivity.MOVE_RIGHT);
+        } else if (player2.getX()<x) {
+            player2.animate(GameOneActivity.MOVE_LEFT);
+        }
 
          player2.setPosition(x, y);
 
@@ -249,12 +260,13 @@ public class GameEngineOnePlayer extends GameEngine{
 
 
         player1.setPosition(x, y);
+        player1.animate(lastMove);
     }
 
 
     private byte checkGoals(Player player1, Player player2, Frisbee frisbee, GameField gameField, GameOneActivity game){
         byte status=(byte) -1;
-        final float centerY = GameOneActivity.CAMERA_HEIGHT / 2;
+        final float centerY = gameField.getLimitDown() / 2 - player1.getHeight();
 
         if(frisbee.getX() <= gameField.getLimitLeft()) {
             //Player 2 goal
@@ -265,6 +277,8 @@ public class GameEngineOnePlayer extends GameEngine{
 
             player1.setPosition(0, centerY);
             player2.setPosition(700, centerY);
+            player1.animate(GameOneActivity.MOVE_NONE);
+            player2.animate(GameOneActivity.MOVE_NONE);
 
         } else if(frisbee.getX() + frisbee.getWidth() >= gameField.getLimitRight()) {
             //Player 1 goal
@@ -274,6 +288,8 @@ public class GameEngineOnePlayer extends GameEngine{
 
             player1.setPosition(0, centerY);
             player2.setPosition(700, centerY);
+            player1.animate(GameOneActivity.MOVE_NONE);
+            player2.animate(GameOneActivity.MOVE_NONE);
         }
         return status;
     }

@@ -27,6 +27,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegionFactory;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
@@ -68,10 +69,11 @@ public class GameOneActivity extends BaseGameActivity {
 
 
     private ITexture mTexture;
-    private ITextureRegion mFaceTextureRegion;
+    private ITextureRegion mFrisbeeTextureRegion;
 
-    private ITextureRegion mPlayer1TextureRegion;
-    private ITextureRegion mPlayer2TextureRegion;
+    private TiledTextureRegion mPlayer1TextureRegion;
+    private TiledTextureRegion mPlayer2TextureRegion;
+
     private ITextureRegion mBackgroundTextureRegion;
 
 
@@ -181,9 +183,9 @@ public class GameOneActivity extends BaseGameActivity {
         });
 
         this.mTexture.load();
-        this.mFaceTextureRegion = TextureRegionFactory.extractFromTexture(this.mTexture);
+        this.mFrisbeeTextureRegion = TextureRegionFactory.extractFromTexture(this.mTexture);
 
-
+        /*
         BitmapTexture playerTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
             @Override
             public InputStream open() throws IOException {
@@ -195,6 +197,17 @@ public class GameOneActivity extends BaseGameActivity {
         this.mPlayer1TextureRegion = TextureRegionFactory.extractFromTexture(playerTexture);
         this.mPlayer2TextureRegion = TextureRegionFactory.extractFromTexture(playerTexture);
 
+        */
+
+
+        BitmapTextureAtlas textureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+        this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, "gpx/pablo.png", 0, 0, 4, 4);
+        textureAtlas.load();
+
+
+        BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/primi.png", 0, 0, 4, 4);
+        textureAtlas2.load();
 
 
 
@@ -275,10 +288,10 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-        final float centerX = (CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
+        final float centerX = (CAMERA_WIDTH - this.mFrisbeeTextureRegion.getWidth()) / 2;
+        final float centerY = (CAMERA_HEIGHT - this.mFrisbeeTextureRegion.getHeight()) / 2;
 
-        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
+        frisbee = new Frisbee(centerX, centerY, this.mFrisbeeTextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_FRISBEE).attachChild(frisbee);
         frisbee.setVisible(false);
 
@@ -296,7 +309,7 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-        player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
+        player2 = new Player(700, centerY, this.mPlayer2TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
         player2.setVel(300);
 
