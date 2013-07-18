@@ -31,7 +31,6 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
