@@ -251,6 +251,9 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
 
         this.mMenuScene.setOnMenuItemClickListener(this);
     }
+    public void onExit() {
+        StadiumActivity.this.finish();
+    }
 
 
 

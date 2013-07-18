@@ -165,6 +165,7 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
             case MENU_QUIT:
 				/* End Activity. */
                 this.finish();
+                System.exit(0);
                 return true;
             case MENU_ONE:
                 StadiumActivity.SelectedGame = 1;
