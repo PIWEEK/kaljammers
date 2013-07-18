@@ -51,9 +51,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="net.kaleidos.kaljammers.StadiumActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_stadium" >
+                android:name="net.kaleidos.kaljammers.StadiumActivity"
+                android:configChanges="orientation|screenSize"
+                android:label="@string/title_activity_stadium" >
+        </activity>
+        <activity
+                android:name="net.kaleidos.kaljammers.PlayerSelectionActivity"
+                android:configChanges="orientation|screenSize"
+                android:label="@string/title_activity_player_selection" >
         </activity>
     </application>
 

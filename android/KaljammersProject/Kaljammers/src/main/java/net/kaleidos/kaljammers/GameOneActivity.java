@@ -27,9 +27,11 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegionFactory;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,10 +70,10 @@ public class GameOneActivity extends BaseGameActivity {
 
 
     private ITexture mTexture;
-    private ITextureRegion mFaceTextureRegion;
+    private ITextureRegion mFrisbeeTextureRegion;
 
-    private ITextureRegion mPlayer1TextureRegion;
-    private ITextureRegion mPlayer2TextureRegion;
+    private TiledTextureRegion mPlayer1TextureRegion;
+    private TiledTextureRegion mPlayer2TextureRegion;
     private ITextureRegion mBackgroundTextureRegion;
 
 
@@ -88,6 +90,9 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
+    public static int SelectedPlayer = 0;
+    public static float SelectedPlayerVel = 1;
+    public static float SelectedPlayerStrenght = 1;
 
 
 
@@ -181,9 +186,10 @@ public class GameOneActivity extends BaseGameActivity {
         });
 
         this.mTexture.load();
-        this.mFaceTextureRegion = TextureRegionFactory.extractFromTexture(this.mTexture);
+        this.mFrisbeeTextureRegion = TextureRegionFactory.extractFromTexture(this.mTexture);
 
 
+        /*
         BitmapTexture playerTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
             @Override
             public InputStream open() throws IOException {
@@ -195,6 +201,17 @@ public class GameOneActivity extends BaseGameActivity {
         this.mPlayer1TextureRegion = TextureRegionFactory.extractFromTexture(playerTexture);
         this.mPlayer2TextureRegion = TextureRegionFactory.extractFromTexture(playerTexture);
 
+        */
+
+
+        BitmapTextureAtlas textureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+        this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas, this, "gpx/pablo.png", 0, 0, 4, 4);
+        textureAtlas.load();
+
+
+        BitmapTextureAtlas textureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(), 256, 384, TextureOptions.BILINEAR);
+        this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(textureAtlas2, this, "gpx/primi.png", 0, 0, 4, 4);
+        textureAtlas2.load();
 
 
 
@@ -275,30 +292,36 @@ public class GameOneActivity extends BaseGameActivity {
 
 
 
-        final float centerX = (CAMERA_WIDTH - this.mFaceTextureRegion.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - this.mFaceTextureRegion.getHeight()) / 2;
+        final float centerX = (CAMERA_WIDTH - this.mFrisbeeTextureRegion.getWidth()) / 2;
+        final float centerY = (CAMERA_HEIGHT - this.mFrisbeeTextureRegion.getHeight()) / 2;
 
-        frisbee = new Frisbee(centerX, centerY, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
+        frisbee = new Frisbee(centerX, centerY, this.mFrisbeeTextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_FRISBEE).attachChild(frisbee);
         frisbee.setVisible(false);
 
         player1 = new Player(0, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player1);
         player1.setPlayer1(true);
-        player1.setVel(350);
 
+         // from 350
+        float fvel = SelectedPlayerVel;
+        float fstrenght = SelectedPlayerStrenght;
         if ((this.SelectedStadium == 3) || (this.SelectedStadium == 5)){
-            player1.setVel(250);
+            fvel = fvel * 0.66f;
+        } else if (this.SelectedStadium == 6) {
+            fvel = fvel * 1.5f;
         }
-        if (this.SelectedStadium == 6){
-            player1.setVel(600);
-        }
+        player1.applyFactorVel(fvel);
+        player1.applyFactorStrength(fstrenght);
 
 
+        //Log.e(">>> "+ player1.getVel());
+        //Log.e(">>> "+ player1.getStrength());
 
-        player2 = new Player(700, centerY, this.mPlayer1TextureRegion, this.getVertexBufferObjectManager());
+        player2 = new Player(700, centerY, this.mPlayer2TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
         player2.setVel(300);
+        player2.applyFactorVel(fvel);
 
         debugText = new Text(0, 100, this.mFont, "                                                                                    ", new TextOptions(HorizontalAlign.LEFT), this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_TEXT).attachChild(debugText);

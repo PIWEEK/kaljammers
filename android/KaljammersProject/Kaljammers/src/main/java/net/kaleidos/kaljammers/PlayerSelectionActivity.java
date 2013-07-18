@@ -1,9 +1,10 @@
 package net.kaleidos.kaljammers;
 
+
 import android.content.Intent;
 import android.graphics.Typeface;
-import org.andengine.opengl.texture.ITexture;
-import org.andengine.opengl.texture.TextureOptions;
+import android.util.Log;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -11,7 +12,6 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.menu.MenuScene;
-import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.TextMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
@@ -19,15 +19,15 @@ import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.color.Color;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 
-public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuItemClickListener {
+public class PlayerSelectionActivity extends SimpleBaseGameActivity implements MenuScene.IOnMenuItemClickListener {
     // ===========================================================
     // Constants
     // ===========================================================
+
+    public static int SelectedGame = 0;
 
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
@@ -35,6 +35,10 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected static final int MENU_QUIT = 0;
     protected static final int MENU_ONE = 1;
     protected static final int MENU_TWO = 2;
+    protected static final int MENU_THREE = 3;
+    protected static final int MENU_FOUR = 4;
+
+
 
 
     // ===========================================================
@@ -51,15 +55,7 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected Scene mBackgroundScene;
 
     private Font mFont;
-    private Font mDroidFont;
-    private Font mDroidFontMax;
-    private Font mKingdomOfHeartsFont;
-    private Font mNeverwinterNightsFont;
-    private Font mPlokFont;
-    private Font mUnrealTournamenFont;
 
-    private ITextureRegion mFaceTextureRegion;
-    private ITextureRegion mBackgroundTextureRegion;
 
 
 
@@ -84,33 +80,6 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
     @Override
     public void onCreateResources() {
-
-        FontFactory.setAssetBasePath("font/");
-
-
-        final ITexture fontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-        this.mDroidFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Droid.ttf", 48, true, android.graphics.Color.WHITE);
-        this.mDroidFont.load();
-
-        this.mDroidFontMax = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Droid.ttf", 58, true, android.graphics.Color.WHITE);
-        this.mDroidFontMax.load();
-
-
-        this.mKingdomOfHeartsFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "KingdomOfHearts.ttf", 48, true, android.graphics.Color.WHITE);
-        this.mKingdomOfHeartsFont.load();
-
-        this.mNeverwinterNightsFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "NeverwinterNights.ttf", 48, true, android.graphics.Color.WHITE);
-        this.mNeverwinterNightsFont.load();
-
-        this.mPlokFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "Plok.ttf", 48, true, android.graphics.Color.WHITE);
-        this.mPlokFont.load();
-
-        this.mUnrealTournamenFont = FontFactory.createFromAsset(this.getFontManager(), fontTexture, this.getAssets(), "UnrealTournament.ttf", 48, true, android.graphics.Color.WHITE);
-        this.mUnrealTournamenFont.load();
-
-
-
-
         this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 64);
         this.mFont.load();
     }
@@ -134,24 +103,38 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
     @Override
     public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
-        switch(pMenuItem.getID()) {
-            case MENU_QUIT:
+
+        Players player = null;
+
+        if (pMenuItem.getID() == MENU_QUIT) {
 				/* End Activity. */
                 this.finish();
                 return true;
-            case MENU_ONE:
-                StadiumActivity.SelectedGame = 1;
-                MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, PlayerSelectionActivity.class));
-                MainMenuActivity.this.finish();
-                return true;
-            case MENU_TWO:
-                StadiumActivity.SelectedGame = 2;
-                MainMenuActivity.this.startActivity(new Intent(MainMenuActivity.this, PlayerSelectionActivity.class));
-                MainMenuActivity.this.finish();
-                return true;
-            default:
-                return false;
         }
+        if (pMenuItem.getID() == MENU_ONE) {
+            player = Players.PLAYER1;
+        }
+
+        if (pMenuItem.getID() == MENU_TWO) {
+            player = Players.PLAYER2;
+        }
+
+        if (pMenuItem.getID() == MENU_THREE) {
+            player = Players.PLAYER3;
+        }
+
+        if (pMenuItem.getID() == MENU_FOUR) {
+            player = Players.PLAYER4;
+        }
+
+        GameOneActivity.SelectedPlayer = player.ordinal() + 1;
+        GameOneActivity.SelectedPlayerVel = player.getVel();
+        GameOneActivity.SelectedPlayerStrenght = player.getStrenght();
+
+        PlayerSelectionActivity.this.startActivity(new Intent(PlayerSelectionActivity.this, StadiumActivity.class));
+
+        PlayerSelectionActivity.this.finish();
+        return true;
     }
 
     // ===========================================================
@@ -163,25 +146,41 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
 
 
         Color pSelectedColor = new Color(0.5f, 0.5f, 0.5f);
-        Color pUnselectedColor = Color.WHITE;
-        Color pQuitColor = Color.RED;
+        Color pUnselectedColor = new Color(1f, 0f, 0f);
+
+        Font menuFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 128, 128, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+        menuFont.load();
+
 
         final IMenuItem onePMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_ONE, mDroidFont, "START ONE PLAYER", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_ONE, menuFont, "La chica", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(onePMenuItem);
 
         final IMenuItem twoPMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_TWO, mDroidFont, "START TWO PLAYERS", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+                        new TextMenuItem(MENU_TWO, menuFont, "Sr. Costa", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(twoPMenuItem);
+
+        final IMenuItem threePMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_THREE, menuFont, "El italiano", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(threePMenuItem);
+
+
+        final IMenuItem fourPMenuItem =
+                new ColorMenuItemDecorator(
+                        new TextMenuItem(MENU_FOUR, menuFont, "El gordo", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
+
+        this.mMenuScene.addMenuItem(fourPMenuItem);
 
 
         final IMenuItem quitMenuItem =
                 new ColorMenuItemDecorator(
-                        new TextMenuItem(MENU_QUIT, mDroidFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pQuitColor);
+                        new TextMenuItem(MENU_QUIT, menuFont, "QUIT", this.getVertexBufferObjectManager()),pSelectedColor, pUnselectedColor);
 
         this.mMenuScene.addMenuItem(quitMenuItem);
 
@@ -198,14 +197,6 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     protected void createBackgroundScene() {
         this.mBackgroundScene = new Scene();
 
-/*
-        final float centerX = (CAMERA_WIDTH - mBackgroundTextureRegion.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - mBackgroundTextureRegion.getHeight()) / 2;
-        SpriteBackground bg = new SpriteBackground(new Sprite(centerX, centerY, mBackgroundTextureRegion, this.getVertexBufferObjectManager()));
-        this.mBackgroundScene.setBackground(bg);
-
-        */
-
         this.mBackgroundScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
 
         this.mBackgroundScene.setBackgroundEnabled(true);
@@ -216,4 +207,26 @@ public class MainMenuActivity extends SimpleBaseGameActivity implements IOnMenuI
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
+
+}
+
+
+enum Players {
+    PLAYER1(1.5f,0.5f), PLAYER2(1,1), PLAYER3(1,1), PLAYER4(0.5f,1.5f);
+
+    private float vel;
+    private float strenght;
+
+    Players(float vel, float strenght) {
+        this.vel = vel;
+        this.strenght = strenght;
+    }
+
+    public float getVel() {
+        return vel;
+    }
+
+    public float getStrenght() {
+        return strenght;
+    }
 }
