@@ -25,16 +25,38 @@ class KaljammersClient {
         def s = new Socket(serverHost, serverPort);
         s.withStreams { input, output ->
         
-            clientToken = UUID.randomUUID().toString().replaceAll('-', '')
-            println "Client token ${clientToken}..."
-            output << "$clientToken\n"
             def reader = input.newReader()
-            def buffer = reader.readLine()
-            println "clientId = $buffer"
-            clientId = Integer.valueOf(buffer)
-        
             def dis = new DataInputStream(input)
             def dos = new DataOutputStream(output)
+        
+            //clientToken = UUID.randomUUID().toString().replaceAll('-', '')
+            //println "Client token ${clientToken}..."
+            //output << "$clientToken\n"           
+            clientId = dis.readByte() as Integer
+            def buffer = reader.readLine()
+            println "clientId = $clientId"
+            
+            // if player 1 send game info
+            println "sending info"
+            if (clientId == 0) {
+                dos.writeByte(1) 
+                dos.writeByte(3) 
+                dos << "\n"
+            } 
+            // else receive
+            else {          
+                dos.writeByte(2) 
+                dos << "\n"
+            }
+            
+            // receive info
+            println "receiving info"
+            def player1 = dis.readByte()
+            def player2 = dis.readByte()
+            def field = dis.readByte()                
+            buffer = reader.readLine()
+            
+            println "selectP1:$player1, selectP2:$player2, field:field"
             
             def p1x = 0
             def p1y = 0

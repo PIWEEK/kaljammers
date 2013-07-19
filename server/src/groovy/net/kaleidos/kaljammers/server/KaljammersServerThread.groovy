@@ -29,6 +29,8 @@ public class KaljammersServerThread extends Thread {
             socket.withStreams { input, output ->
             
                 def reader = input.newReader()
+                def dis = new DataInputStream(input)
+                def dos = new DataOutputStream(output)
 
                 // check client id
                 if (gameComm.numClients + 1 > GameComm.MAX_PLAYERS) {
@@ -39,14 +41,41 @@ public class KaljammersServerThread extends Thread {
                 this.clientId = gameComm.numClients++
                 
                 // handshaking
-                // 1.- read token
-                // 2.- send client id
-                def buffer = reader.readLine()
-                println "client connected: $clientId, clientToken: $buffer"
-                output << "$clientId\n"
-                    
-                def dis = new DataInputStream(input)
-                def dos = new DataOutputStream(output)
+                // 1.- send client id
+                dos.writeByte(clientId) 
+                dos << "\n"
+                
+                
+                // wait until players connected
+                println "waiting conection"                         
+                while (gameComm.numClients < GameComm.MAX_PLAYERS) {    
+                    print "."
+                    sleep(500)
+                }
+                
+                
+                
+                // wait player to receive players selection and field                
+                def player = dis.readByte()
+                def field = dis.readByte()                
+                reader.readLine()
+                gameComm.saveGameInfo(clientId, [player:player, field:field])
+
+                // wait until info complete
+                def completed = false
+                println "waiting info completed"            
+                while (!completed) {
+                    print "."
+                    completed = (gameComm.gameInfo.player1 != 0
+                                    && gameComm.gameInfo.player2 != 0)                                    
+                    sleep(500)
+                }
+
+                // send info to 
+                dos.writeByte(gameComm.gameInfo.player1)
+                dos.writeByte(gameComm.gameInfo.player2) 
+                dos.writeByte(gameComm.gameInfo.field) 
+                dos << "\n"
                         
                 while (true) {
                     
@@ -64,13 +93,13 @@ public class KaljammersServerThread extends Thread {
                         def isGoal = dis.readBoolean()
                         def isPick = dis.readBoolean()
                         
-                        buffer = reader.readLine()
+                        reader.readLine()
                         
                         println "player$clientId move: $px,$py,$fx,$fy,$sfx,$sfy,$isGoal,$isPick"
 
                         def action = [px:px, py:py, fx:fx, fy:fy, sfx:sfx, sfy:sfy, isGoal:isGoal, isPick:isPick]
 
-                        def move = gameComm.saveInfo(clientId, action)
+                        def move = gameComm.saveMoveInfo(clientId, action)
                         
                         println "$move"
 
