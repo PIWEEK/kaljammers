@@ -52,11 +52,26 @@ class GameBrain {
 
     /**
      *
+     * @param id client id
+     * @param action [direction:0, b1:true, b2:true]
+     * return Map with [coordP1:[x,y], coordP2:[x,y], coordF:[x,y], statusF:{0..2}
+     */
+    def gameProcess(id, action) {        
+        // save action player
+        
+        // return other player info
+
+        return info
+    }
+    
+    /**
+     * DEPRECATED
+     * 
      * @param actionP1 [direction:0, b1:true, b2:true]
      * @param actionP2 [direction:0, b1:true, b2:true]
      * return Map with [coordP1:[x,y], coordP2:[x,y], coordF:[x,y], statusF:{0..2}
      */
-    def gameProcess(actionP1, actionP2) {
+    def gameProcess2(actionP1, actionP2) {
         // game logic
         def info = calculateAction(actionP1, actionP2)
 

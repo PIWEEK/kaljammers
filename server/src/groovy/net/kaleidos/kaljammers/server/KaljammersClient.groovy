@@ -4,7 +4,7 @@ class KaljammersClient {
 
     def serverPort
     def serverHost = "localhost"
-    def cliendId
+    Integer clientId = null
     def clientToken
 
     static main(args) {
@@ -24,34 +24,47 @@ class KaljammersClient {
      
         def s = new Socket(serverHost, serverPort);
         s.withStreams { input, output ->
+        
             clientToken = UUID.randomUUID().toString().replaceAll('-', '')
             println "Client token ${clientToken}..."
             output << "$clientToken\n"
             def reader = input.newReader()
             def buffer = reader.readLine()
             println "clientId = $buffer"
+            clientId = Integer.valueOf(buffer)
         
             def dis = new DataInputStream(input)
-
-        
+            def dos = new DataOutputStream(output)
+            
+            def p1x = 0
+            def p1y = 0
+            
             while (true) {
-                output << "111\n"
+                def move = [px:p1x++, py:p1y++, fx:clientId, fy:clientId, sfx:5, sfy:5, isGoal:true, isPick:true]
+                println "mymove: $move.px,$move.py,$move.fx,$move.fy,$move.sfx,$move.sfy,$move.isGoal,$move.isPick"
                 
+                dos.writeFloat(move.px) //2
+                dos.writeFloat(move.py)
+                dos.writeFloat(move.fx)
+                dos.writeFloat(move.fy)
+                dos.writeFloat(move.sfx)
+                dos.writeFloat(move.sfy)
+                dos.writeBoolean(move.isGoal)
+                dos.writeBoolean(move.isPick)
+                dos << "\n"
                 
-                def p1x = dis.readShort()
-                def p1y = dis.readShort()
-                def p2x = dis.readShort()
-                def p2y = dis.readShort()
-                def pfx = dis.readShort()
-                def pfy = dis.readShort()
-                def fs = dis.readByte()
+                def px = dis.readFloat()
+                def py = dis.readFloat()
+                def fx = dis.readFloat()
+                def fy = dis.readFloat()
+                def sfx = dis.readFloat()
+                def sfy = dis.readFloat()
+                def isGoal = dis.readBoolean()
+                def isPick = dis.readBoolean()
                 
                 buffer = reader.readLine()
                 
-                println "$p1x,$p1y,$p2x,$p2y,$pfx,$pfy,$fs"
-                
-                //println "buffer: $buffer, size: ${buffer.size()}"
-                //println "p1.x: ${Byte.valueOf(buffer[0])}"
+                println "yourmove: $px,$py,$fx,$fy,$sfx,$sfy,$isGoal,$isPick"
             }
         }    
     }

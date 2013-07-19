@@ -9,14 +9,14 @@
  */ 
 package net.kaleidos.kaljammers.server
 
-import net.kaleidos.kaljammers.game.GameBrain
+import net.kaleidos.kaljammers.game.GameComm
 
 public class KaljammersServerThread extends Thread {
     
     private Socket socket = null;
     def clientId
     
-    def gameBrain = GameBrain.instance
+    def gameComm = GameComm.instance
 
     public KaljammersServerThread(Socket socket) {
         super("KaljammersServerThread");
@@ -30,17 +30,24 @@ public class KaljammersServerThread extends Thread {
             
                 def reader = input.newReader()
 
-                // client id
-                gameBrain.numClients++
-                this.clientId = gameBrain.numClients
+                // check client id
+                if (gameComm.numClients + 1 > GameComm.MAX_PLAYERS) {
+                    output << "Eres el $gameComm+1 ya somos muchos no puedes jugar!\n"
+                    return
+                }
+                
+                this.clientId = gameComm.numClients++
                 
                 // handshaking
+                // 1.- read token
+                // 2.- send client id
                 def buffer = reader.readLine()
                 println "client connected: $clientId, clientToken: $buffer"
                 output << "$clientId\n"
                     
                 def dis = new DataInputStream(input)
-                    
+                def dos = new DataOutputStream(output)
+                        
                 while (true) {
                     
                         println "clientId: $clientId"
@@ -48,31 +55,34 @@ public class KaljammersServerThread extends Thread {
                         //if (buffer.equals("Bye"))
                             //break;
                     
-                        def direction = dis.readByte()
-                        def b1 = dis.readBoolean()
-                        def b2 = dis.readBoolean()
-                        buffer = reader.readLine()
-                        //println "direction: $direction b1: $b1 b2: $b2"
-
-                        def actionP1 = [direction:direction, b1:b1, b2:b2]
-
-                        def move = gameBrain.gameProcess(actionP1, null)
-
-                        //[info.coordP1.x, info.coordP1.y, info.coordP2.x, info.coordP2.y,
-                        // info.coordF.x, info.coordF.y, info.statusF.ordinal()] as byte[]
-
-                        //println "$move"
-
-                        def dos = new DataOutputStream(output)
-                        dos.writeShort(move.coordP1.x) //2
-                        dos.writeShort(move.coordP1.y)
-                        dos.writeShort(move.coordP2.x)
-                        dos.writeShort(move.coordP2.y)
-                        dos.writeShort(move.coordF.x)
-                        dos.writeShort(move.coordF.y)
-                        dos.writeByte((byte)move.statusF)
-                        dos << "\n"
+                        def px = dis.readFloat()
+                        def py = dis.readFloat()
+                        def fx = dis.readFloat()
+                        def fy = dis.readFloat()
+                        def sfx = dis.readFloat()
+                        def sfy = dis.readFloat()
+                        def isGoal = dis.readBoolean()
+                        def isPick = dis.readBoolean()
                         
+                        buffer = reader.readLine()
+                        
+                        println "player$clientId move: $px,$py,$fx,$fy,$sfx,$sfy,$isGoal,$isPick"
+
+                        def action = [px:px, py:py, fx:fx, fy:fy, sfx:sfx, sfy:sfy, isGoal:isGoal, isPick:isPick]
+
+                        def move = gameComm.saveInfo(clientId, action)
+                        
+                        println "$move"
+
+                        dos.writeFloat(move.px) //2
+                        dos.writeFloat(move.py)
+                        dos.writeFloat(move.fx)
+                        dos.writeFloat(move.fy)
+                        dos.writeFloat(move.sfx)
+                        dos.writeFloat(move.sfy)
+                        dos.writeBoolean(move.isGoal)
+                        dos.writeBoolean(move.isPick)
+                        dos << "\n"
                 }
                 
                 output.close();
