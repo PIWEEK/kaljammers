@@ -3,7 +3,6 @@ package net.kaleidos.kaljammers;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.opengl.GLES20;
-
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
 import org.andengine.engine.camera.hud.controls.DigitalOnScreenControl;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-
 public class GameOneActivity extends BaseGameActivity {
 
     public static final int CAMERA_WIDTH = 800;
@@ -64,6 +62,8 @@ public class GameOneActivity extends BaseGameActivity {
     public static final int STATUS_PLAYER2_LAUNCH = 4;
     public static final int STATUS_PLAYER1_GOAL = 5;
     public static final int STATUS_PLAYER2_GOAL = 6;
+    public static final int STATUS_PLAYER1_WIN = 7;
+    public static final int STATUS_PLAYER2_WIN = 8;
 
 
     public static int SelectedStadium = 0;
@@ -121,6 +121,8 @@ public class GameOneActivity extends BaseGameActivity {
     Text score1Text;
     Text score2Text;
     Text goalText;
+    Text win1Text;
+    Text win2Text;
 
     GameField gameField = new GameField();
     public static GameEngine gameEngine;
@@ -143,6 +145,8 @@ public class GameOneActivity extends BaseGameActivity {
         return score1;
     }
 
+
+
     public void setScore1(byte score1) {
         this.score1 = score1;
         if (score1<10){
@@ -157,6 +161,8 @@ public class GameOneActivity extends BaseGameActivity {
     }
 
     public void setScore2(byte score2) {
+
+
         this.score2 = score2;
         if (score2<10){
             score2Text.setText("0"+score2);
@@ -266,11 +272,26 @@ public class GameOneActivity extends BaseGameActivity {
 
     public void mainLoop(float pSecondsElapsed){
         status = gameEngine.mainLoop(this, pSecondsElapsed, status, lastMove, buttonPresed);
+
+
+
         buttonPresed = false;
-        if ((status == STATUS_PLAYER1_GOAL)||(status == STATUS_PLAYER2_GOAL)){
-            goalText.setVisible(true);
-        } else {
-            goalText.setVisible(false);
+
+
+
+        if ((status == STATUS_PLAYER1_WIN) || (status == STATUS_PLAYER2_WIN)){
+            if (status == STATUS_PLAYER1_WIN){
+                win1Text.setVisible(true);
+            }else{
+                win2Text.setVisible(true);
+            }
+
+        }else{
+            if ((status == STATUS_PLAYER1_GOAL)||(status == STATUS_PLAYER2_GOAL)){
+                goalText.setVisible(true);
+            } else {
+                goalText.setVisible(false);
+            }
         }
     }
 
@@ -330,8 +351,6 @@ public class GameOneActivity extends BaseGameActivity {
         player1.applyFactorStrength(fstrenght);
 
 
-        //Log.e(">>> "+ player1.getVel());
-        //Log.e(">>> "+ player1.getStrength());
 
         player2 = new Player(700, centerY, this.mPlayer2TextureRegion, this.getVertexBufferObjectManager());
         scene.getChildByIndex(LAYER_PLAYER).attachChild(player2);
@@ -349,10 +368,17 @@ public class GameOneActivity extends BaseGameActivity {
         scene.getChildByIndex(LAYER_TEXT).attachChild(score2Text);
 
 
-
         goalText = new Text(190, 130, this.mGoalFont, "GOAL!", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         goalText.setVisible(false);
         scene.getChildByIndex(LAYER_TEXT).attachChild(goalText);
+
+        win1Text = new Text(190, 130, this.mFont, "Has ganado la PiWeek!!", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        win1Text.setVisible(false);
+        scene.getChildByIndex(LAYER_TEXT).attachChild(win1Text);
+
+        win2Text = new Text(190, 130, this.mFont, "Te han ganado la PiWeek!!", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        win2Text.setVisible(false);
+        scene.getChildByIndex(LAYER_TEXT).attachChild(win2Text);
 
         initOnScreenControls();
 

@@ -3,7 +3,6 @@ package net.kaleidos.kaljammers;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
@@ -166,7 +165,6 @@ public class StadiumActivity extends SimpleBaseGameActivity implements MenuScene
             GameOneActivity.gameEngine = new GameEngineOnePlayer();
             StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }else{
-            Log.e("-------------------------------KALJAMMERS-------------------", "CREATING TWO PLAYERS GAME");
             GameOneActivity.gameEngine = new GameEngineSyncTwoPlayers();
             StadiumActivity.this.startActivity(new Intent(StadiumActivity.this, GameOneActivity.class));
         }

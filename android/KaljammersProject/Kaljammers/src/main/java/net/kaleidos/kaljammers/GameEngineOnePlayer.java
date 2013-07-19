@@ -1,5 +1,6 @@
 package net.kaleidos.kaljammers;
 
+import android.content.Intent;
 import java.util.Random;
 
 /**
@@ -11,6 +12,7 @@ public class GameEngineOnePlayer extends GameEngine{
     float timeGoal = 0;
     float sprintTime = 0;
     int sprintDirection = -1;
+    private static int MAX_GOALS = 21;
     boolean atacking = true;
     Random random = new Random();
 
@@ -51,14 +53,21 @@ public class GameEngineOnePlayer extends GameEngine{
                     movePlayer1(player1, frisbee, gameField, lastMove, buttonPressed, secondsElapsed);
                     movePlayer2(player2, frisbee, gameField, secondsElapsed);
                     newStatus = player2Launch(frisbee, player1);
-                    break;
                 }
+                break;
             case GameOneActivity.STATUS_PLAYER1_GOAL:
                 newStatus = player1Goal(secondsElapsed);
                 break;
             case GameOneActivity.STATUS_PLAYER2_GOAL:
                 newStatus = player2Goal(secondsElapsed);
                 break;
+            case GameOneActivity.STATUS_PLAYER1_WIN:
+                newStatus = player1Win(game, secondsElapsed);
+                break;
+            case GameOneActivity.STATUS_PLAYER2_WIN:
+                newStatus = player2Win(game, secondsElapsed);
+                break;
+
         }
         return newStatus;
     }
@@ -300,9 +309,15 @@ public class GameEngineOnePlayer extends GameEngine{
         byte status=(byte) -1;
         final float centerY = gameField.getLimitDown() / 2 - player1.getHeight();
 
+        byte score1 = game.getScore1();
+        byte score2 = game.getScore2();
+
+
+
         if(frisbee.getX() <= gameField.getLimitLeft()) {
             //Player 2 goal
-            game.setScore2((byte) (game.getScore2()+3));
+            score2 += 3;
+            game.setScore2(score2);
 
             status = GameOneActivity.STATUS_PLAYER1_GOAL;
             frisbee.setVisible(false);
@@ -316,7 +331,8 @@ public class GameEngineOnePlayer extends GameEngine{
 
         } else if(frisbee.getX() + frisbee.getWidth() >= gameField.getLimitRight()) {
             //Player 1 goal
-            game.setScore1((byte) (game.getScore1()+3));
+            score1 += 3;
+            game.setScore1(score1);
             status = GameOneActivity.STATUS_PLAYER2_GOAL;
             frisbee.setVisible(false);
 
@@ -327,13 +343,23 @@ public class GameEngineOnePlayer extends GameEngine{
             sprintDirection=-1;
             sprintTime = 0;
         }
+
+
+        if ((score1 == MAX_GOALS) || (score2 == MAX_GOALS)){
+            if (score1 > score2){
+                status = GameOneActivity.STATUS_PLAYER1_WIN;
+            }else{
+                status = GameOneActivity.STATUS_PLAYER2_WIN;
+            }
+        }
+
         return status;
     }
 
     private byte player1Goal(float secondsElapsed){
         byte status = GameOneActivity.STATUS_PLAYER1_GOAL;
         timeGoal += secondsElapsed;
-        if (timeGoal>=2){
+        if (timeGoal>=0.8){
             status = GameOneActivity.STATUS_PLAYER1_FRISBEE;
             timeGoal = 0;
         }
@@ -346,6 +372,26 @@ public class GameEngineOnePlayer extends GameEngine{
         if (timeGoal>=0.8){
             status = GameOneActivity.STATUS_PLAYER2_FRISBEE;
             timeGoal = 0;
+        }
+        return status;
+    }
+
+    private byte player1Win(GameOneActivity game, float secondsElapsed){
+        byte status = GameOneActivity.STATUS_PLAYER1_WIN;
+        timeGoal += secondsElapsed;
+        if (timeGoal>=2){
+            game.startActivity(new Intent(game, MainMenuActivity.class));
+            game.finish();
+        }
+        return status;
+    }
+
+    private byte player2Win(GameOneActivity game, float secondsElapsed){
+        byte status = GameOneActivity.STATUS_PLAYER2_WIN;
+        timeGoal += secondsElapsed;
+        if (timeGoal>=2){
+            game.startActivity(new Intent(game, MainMenuActivity.class));
+            game.finish();
         }
         return status;
     }
