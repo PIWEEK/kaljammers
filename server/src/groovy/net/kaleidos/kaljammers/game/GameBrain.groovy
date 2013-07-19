@@ -20,10 +20,11 @@ class GameBrain {
     public static final int STATUS_PLAYER2_FRISBEE = 3;
     public static final int STATUS_PLAYER2_LAUNCH = 4;
 
-    boolean atacking = true
-    float timePlayer2Frisbee = 0;
 
+    Integer numClients = 0
 
+    Boolean atacking = true
+    Float timePlayer2Frisbee = 0;
 
     Coordinate coordP1 = new Coordinate(x:0, y:0) // x,y
     Coordinate coordP2 = new Coordinate(x:0, y:0) // x,y
@@ -42,9 +43,12 @@ class GameBrain {
     def game = [score1:0, score2:0]
     int status = STATUS_PLAYER1_FRISBEE;
 
+
+    // singleton
     private static final INSTANCE = new GameBrain()
     static getInstance(){ return INSTANCE }
     private GameBrain() {}
+    
 
     /**
      *

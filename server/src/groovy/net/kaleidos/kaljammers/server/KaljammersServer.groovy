@@ -1,3 +1,13 @@
+/**
+ * KaljammersServer
+ * 
+ * a PIWEEK project by Kaleidos
+ * 
+ * Some code based in: http://docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
+ * has Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * 
+ */ 
+
 package net.kaleidos.kaljammers.server
 
 import java.net.ServerSocket
@@ -6,15 +16,31 @@ import net.kaleidos.kaljammers.game.GameBrain
 class KaljammersServer {
 
     def serverPort = 4444
-    //def serverPort2 = 4445
-    def numClients = 0
 
     def gameBrain = GameBrain.instance
 
-    public void serverProcess() {
+    public void serverProcess() throws IOException {
+        
+        ServerSocket serverSocket = null
+        boolean listening = true
+
+        
         println "Starting server in port ${serverPort}..."
-        def server = new ServerSocket(serverPort)
-        //def server2 = new ServerSocket(serverPort2)
+
+
+        try {
+            serverSocket = new ServerSocket(serverPort)
+        } catch (IOException e) {
+            System.err.println("Could not listen on port: 4444.")
+            System.exit(-1)
+        }
+        
+        while (listening) {
+            new KaljammersServerThread(serverSocket.accept()).start()
+        }
+
+
+        // REFACTOR
 
         while(true) {
             server.accept { socket ->
