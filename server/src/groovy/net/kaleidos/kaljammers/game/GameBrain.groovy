@@ -2,7 +2,7 @@ package net.kaleidos.kaljammers.game
 
 class GameBrain {
 
-    final static int sleepMillis = 0
+    final static int sleepMillis = 1000
 
     public static final int MOVE_NONE = 0
     public static final int MOVE_UP = 10

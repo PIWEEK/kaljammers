@@ -7,6 +7,9 @@
  * has Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
  * 
  */ 
+package net.kaleidos.kaljammers.server
+
+import net.kaleidos.kaljammers.game.GameBrain
 
 public class KaljammersServerThread extends Thread {
     
@@ -23,9 +26,9 @@ public class KaljammersServerThread extends Thread {
     public void run() {
         try {
             
-            socket.withStreams { in, out ->
+            socket.withStreams { input, output ->
             
-                def reader = in.newReader()
+                def reader = input.newReader()
 
                 // client id
                 gameBrain.numClients++
@@ -34,11 +37,13 @@ public class KaljammersServerThread extends Thread {
                 // handshaking
                 def buffer = reader.readLine()
                 println "client connected: $clientId, clientToken: $buffer"
-                out << "$clientId\n"
+                output << "$clientId\n"
                     
-                def dis = new DataInputStream(in)
+                def dis = new DataInputStream(input)
                     
                 while (true) {
+                    
+                        println "clientId: $clientId"
                     
                         //if (buffer.equals("Bye"))
                             //break;
@@ -58,7 +63,7 @@ public class KaljammersServerThread extends Thread {
 
                         //println "$move"
 
-                        def dos = new DataOutputStream(out)
+                        def dos = new DataOutputStream(output)
                         dos.writeShort(move.coordP1.x) //2
                         dos.writeShort(move.coordP1.y)
                         dos.writeShort(move.coordP2.x)
@@ -70,8 +75,8 @@ public class KaljammersServerThread extends Thread {
                         
                 }
                 
-                out.close();
-                in.close();
+                output.close();
+                input.close();
             }
         
             socket.close();
